@@ -1,0 +1,82 @@
+/* 
+    Created on : 11.05.2018, 20:00:36
+    Author     : mosesfender
+*/
+@import "icomoon.css";
+[data-ancestor="mfElement"] {
+  box-sizing: border-box;
+  position: relative;
+  border: 0;
+}
+.mf-tree {
+  cursor: default;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border: 1px solid grey;
+  font-family: Tahoma, sans-serif;
+  font-weight: normal;
+  font-size: 0.9em;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.mf-tree b,
+.mf-tree i {
+  font-weight: normal;
+  font-style: normal;
+}
+.mf-tree b.icon-circle-o,
+.mf-tree i.icon-circle-o {
+  font-size: 0.5em;
+  vertical-align: middle;
+  padding-left: .5em;
+}
+.mf-tree ul {
+  margin: 0 0 0 0.9em;
+  padding: 0;
+  list-style: none;
+  display: none;
+}
+.mf-tree ul li i {
+  font-size: 0.9em;
+  transition: all .1s ease 0s;
+}
+.mf-tree ul li b {
+  margin-left: .4em;
+  padding: .1em .3em;
+}
+.mf-tree ul li.selected > b {
+  background-color: #6cbddd;
+}
+.mf-tree ul li.collapsed > i {
+  /*filter: progid: DXImageTransform.Microsoft.BasicImage(rotation=0.5);*/
+  -webkit-transform: rotate(0);
+  -moz-transform: rotate(0);
+  -ms-transform: rotate(0);
+  -o-transform: rotate(0);
+  transform: rotate(0);
+  display: inline-block;
+}
+.mf-tree ul li.collapsed > ul {
+  display: none;
+}
+.mf-tree ul li.expanded > i {
+  /*filter: progid: DXImageTransform.Microsoft.BasicImage(rotation=0.5);*/
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  display: inline-block;
+}
+.mf-tree ul li.expanded > ul {
+  display: block;
+}
+.mf-tree > ul {
+  display: block;
+}
+/*# sourceMappingURL=BaseTreeView.css.map */

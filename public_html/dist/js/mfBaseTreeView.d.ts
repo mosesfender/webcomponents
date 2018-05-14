@@ -1,0 +1,85 @@
+declare module mf {
+    interface IBaseNodeData {
+        caption: string;
+        expanded?: boolean;
+        selected?: boolean;
+        children?: Array<IBaseNodeData>;
+    }
+    enum NODE_EXPANDED_STATE {
+        NODE_EXPANDED = "expanded",
+        NODE_COLLAPSED = "collapsed",
+        NODE_NOCHILD = "nochild",
+    }
+    enum NODE_CLASSES {
+        NODE_SELECTED = "selected",
+    }
+    class TBaseTreeNode extends mf.TBaseElement {
+        leverIconClass: string;
+        leverIconClassNoChild: string;
+        protected _treeView: mf.TBaseTreeView;
+        protected _nodes: TBaseTreeNodes;
+        protected _label: HTMLElement;
+        protected _colapseLever: HTMLElement;
+        protected _data: mf.IBaseNodeData;
+        constructor(options: any);
+        protected _innerInit(): void;
+        toggle(): void;
+        expand(): void;
+        protected _handlerExpand(): void;
+        collapse(): void;
+        protected _handlerCollapse(): void;
+        protected _hasChild(): boolean;
+        select(): void;
+        unselect(): void;
+        addNode(node: mf.TBaseTreeNode): any;
+        addNode(label: string, data: mf.IBaseNodeData): any;
+        protected _createNodes(): TBaseTreeNodes;
+        readonly parentNodes: TBaseTreeNodes;
+        data: mf.IBaseNodeData;
+        readonly expanded: boolean;
+        caption: string;
+        readonly nodes: TBaseTreeNodes;
+        TreeView: mf.TBaseTreeView;
+        readonly tag: string;
+    }
+}
+declare module mf {
+    class TBaseTreeNodes extends mf.TBaseElement {
+        protected _treeView: mf.TBaseTreeView;
+        constructor(options: any);
+        addNode(node: mf.TBaseTreeNode): any;
+        addNode(label: string, data: mf.IBaseNodeData): any;
+        removeNode(node: mf.TBaseTreeNode, _selidx?: number): void;
+        nodes: Array<mf.IBaseNodeData>;
+        TreeView: mf.TBaseTreeView;
+        readonly tag: string;
+    }
+}
+declare module mf {
+    enum TREE_ROLE {
+        TREE_VIEW = "treeview",
+        TREE_NODES = "treenodes",
+        TREE_NODE = "treenode",
+        TREE_NODE_LEVER = "treenodelever",
+        TREE_NODE_CAPTION = "treenodecaption",
+    }
+    class TBaseTreeView extends mf.TBaseElement {
+        protected _nodes: TBaseTreeNodes;
+        protected _data: Array<mf.IBaseNodeData>;
+        all: Array<mf.TBaseTreeNode>;
+        protected _selected: Array<mf.TBaseTreeNode>;
+        multiselect: boolean;
+        constructor(options: any);
+        protected _keyupHandler(ev: KeyboardEvent): void;
+        protected _contextMenuHandler(ev: Event): void;
+        protected _clickHandler(ev: Event): void;
+        protected _dblclickHandler(ev: Event): void;
+        loadTreeData(): void;
+        protected _select(node: mf.TBaseTreeNode): void;
+        protected _deselect(inode?: mf.TBaseTreeNode): void;
+        readonly selected: TBaseTreeNode[];
+        readonly nodes: TBaseTreeNodes;
+        data: Array<mf.IBaseNodeData>;
+        readonly tag: string;
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "amd",
+        "target": "es5",
+        "removeComments": true,
+        "noImplicitAny": false,
+        "declaration": true,
+        "outFile": "../../dist/js/mfBaseTreeView.js"
+    },
+    "files": [
+        "../../dist/js/common.d.ts",
+        "../../dist/js/mfBaseElement.d.ts",
+        "BaseTreeNode.ts",
+        "BaseTreeNodes.ts",
+        "BaseTreeView.ts"
+    ]
+}

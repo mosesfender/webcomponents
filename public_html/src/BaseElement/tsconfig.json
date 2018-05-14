@@ -1,0 +1,16 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "amd",
+        "target": "es5",
+        "removeComments": true,
+        "noImplicitAny": false,
+        "declaration": true,
+        "outFile": "../../dist/js/mfBaseElement.js"
+    },
+    "files": [
+        "../../@types/common.d.ts",
+        "../../dist/js/mfContextMenu.d.ts",
+        "index.ts"
+    ]
+}

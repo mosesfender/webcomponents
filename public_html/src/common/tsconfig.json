@@ -1,0 +1,14 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "amd",
+        "target": "es5",
+        "removeComments": true,
+        "noImplicitAny": false,
+        "declaration": true,        
+        "outFile": "../../dist/js/common.js"
+    },
+    "files": [
+        "common.ts"
+    ]
+}

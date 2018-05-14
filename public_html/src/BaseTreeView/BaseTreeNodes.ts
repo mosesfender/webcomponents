@@ -1,0 +1,57 @@
+module mf {
+    export class TBaseTreeNodes extends mf.TBaseElement {
+        protected _treeView: mf.TBaseTreeView;
+
+        constructor(options) {
+            super(options);
+            this.element.setAttribute('data-role', TREE_ROLE.TREE_NODES);
+        }
+
+        public addNode(node: mf.TBaseTreeNode);
+        public addNode(label: string, data: mf.IBaseNodeData);
+        public addNode() {
+            let args = arguments;
+            if (args[0] instanceof mf.TBaseTreeNode) {
+                (args[0] as mf.TBaseTreeNode).TreeView = this._treeView;
+                this.element.appendChild((args[0] as mf.TBaseTreeNode).element);
+                this._treeView.all.push(args[0]);
+                return args[0];
+            }
+            if (typeof (args[0]) === 'string') {
+                let node = new mf.TBaseTreeNode(args[1]);
+                node.TreeView = this._treeView;
+                this.element.appendChild(node.element);
+                this._treeView.all.push(node);
+                return node;
+            }
+        }
+
+        public removeNode(node: mf.TBaseTreeNode, _selidx?: number) {
+            let _allidx = this._treeView.all.indexOf(node);
+            if (!_selidx) {
+                _selidx = this._treeView.selected.indexOf(node);
+            }
+            this.element.removeChild(node.element);
+        }
+
+        public set nodes(val: Array<mf.IBaseNodeData>) {
+            if (val.length) {
+                for (let i = 0; i < val.length; i++) {
+                    let node = new mf.TBaseTreeNode({
+                        data: val[i],
+                        TreeView: this._treeView
+                    });
+                    this.addNode(node);
+                }
+            }
+        }
+
+        public set TreeView(val: mf.TBaseTreeView) {
+            this._treeView = val;
+        }
+
+        public get tag() {
+            return 'ul';
+        }
+    }
+}
