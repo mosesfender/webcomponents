@@ -4,7 +4,7 @@ module mf {
     export const ANCESTOR_OBJ = '__obj';
 
     export class TBaseElement {
-        public cssClass: string;
+        protected _cssClass: string;
         protected _tag: string = 'div';
         protected _parent: HTMLElement;
         protected _element: HTMLElement;
@@ -24,7 +24,7 @@ module mf {
         }
 
         protected _innerInit(options?) {
-            
+
         };
 
         public fire(atype: string, adata?: any) {
@@ -80,6 +80,19 @@ module mf {
 
         public get contextMenu() {
             return this._contextMenu;
+        }
+
+        public get cssClass() {
+            return this._cssClass;
+        }
+
+        public set cssClass(val: string | Array<string>) {
+            if (isArray(val)) {
+                this._cssClass = (val as Array<string>).join(' ');
+            } else {
+                this._cssClass = val.toString();
+            }
+            this.element.classList.addMany(this._cssClass);
         }
     }
 

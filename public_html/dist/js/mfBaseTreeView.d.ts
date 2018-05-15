@@ -31,6 +31,9 @@ declare module mf {
         protected _hasChild(): boolean;
         select(): void;
         unselect(): void;
+        expandAll(): any;
+        collapseAll(): any;
+        deleteNode(): void;
         addNode(node: mf.TBaseTreeNode): any;
         addNode(label: string, data: mf.IBaseNodeData): any;
         protected _createNodes(): TBaseTreeNodes;
@@ -51,11 +54,21 @@ declare module mf {
         addNode(label: string, data: mf.IBaseNodeData): any;
         removeNode(node: mf.TBaseTreeNode, _selidx?: number): void;
         nodes: Array<mf.IBaseNodeData>;
+        readonly siblings: HTMLCollection;
+        readonly count: number;
         TreeView: mf.TBaseTreeView;
         readonly tag: string;
     }
 }
 declare module mf {
+    interface INodesExplore {
+        first(): mf.TBaseTreeNode;
+        last(): mf.TBaseTreeNode;
+        next(): mf.TBaseTreeNode;
+        prev(): mf.TBaseTreeNode;
+        nextSibling(): mf.TBaseTreeNode;
+        prevSibling(): mf.TBaseTreeNode;
+    }
     enum TREE_ROLE {
         TREE_VIEW = "treeview",
         TREE_NODES = "treenodes",
@@ -63,23 +76,37 @@ declare module mf {
         TREE_NODE_LEVER = "treenodelever",
         TREE_NODE_CAPTION = "treenodecaption",
     }
-    class TBaseTreeView extends mf.TBaseElement {
+    class TBaseTreeView extends mf.TBaseElement implements mf.INodesExplore {
         protected _nodes: TBaseTreeNodes;
         protected _data: Array<mf.IBaseNodeData>;
         all: Array<mf.TBaseTreeNode>;
         protected _selected: Array<mf.TBaseTreeNode>;
         multiselect: boolean;
+        protected _contextMenuList: mf.TContextMenuList;
+        protected _contextMenuMap: mf.TContextMenuMap;
         constructor(options: any);
-        protected _keyupHandler(ev: KeyboardEvent): void;
-        protected _contextMenuHandler(ev: Event): void;
-        protected _clickHandler(ev: Event): void;
-        protected _dblclickHandler(ev: Event): void;
-        loadTreeData(): void;
-        protected _select(node: mf.TBaseTreeNode): void;
-        protected _deselect(inode?: mf.TBaseTreeNode): void;
+        loadTreeData(): this;
+        protected _select(node: mf.TBaseTreeNode): this;
+        protected _deselect(inode?: mf.TBaseTreeNode): this;
+        expandAll(): this;
+        collapseAll(): this;
         readonly selected: TBaseTreeNode[];
         readonly nodes: TBaseTreeNodes;
         data: Array<mf.IBaseNodeData>;
         readonly tag: string;
+        contextMenuMap: mf.TContextMenuMap | Array<mf.IContextMenuMapItem>;
+        contextMenuList: mf.TContextMenuList | Array<mf.IContextMenu>;
+        readonly count: number;
+        first(): mf.TBaseTreeNode;
+        last(): mf.TBaseTreeNode;
+        next(): mf.TBaseTreeNode;
+        prev(): mf.TBaseTreeNode;
+        nextSibling(): mf.TBaseTreeNode;
+        prevSibling(): mf.TBaseTreeNode;
+        private _findNodeByIndex(idx);
+        protected _keyupHandler(ev: KeyboardEvent): void;
+        protected _contextMenuHandler(ev: Event): void;
+        protected _clickHandler(ev: Event): void;
+        protected _dblclickHandler(ev: Event): void;
     }
 }

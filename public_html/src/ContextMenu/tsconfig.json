@@ -11,6 +11,10 @@
     "files": [
         "../../@types/common.d.ts",
         "../../dist/js/mfBaseElement.d.ts",
-        "index.ts"
+        "ContextMenuMap.ts",
+        "ContextMenuList.ts",
+        "ContextMenuItem.ts",
+        "ContextMenuItems.ts",
+        "ContextMenu.ts"
     ]
 }

@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="dist/css/BaseTreeView.css" rel="stylesheet" type="text/css"/>
+        <link href="dist/css/ContextMenu.css" rel="stylesheet" type="text/css"/>
         <script src="dist/js/common.js" type="text/javascript"></script>
         <script src="dist/js/mfBaseElement.js" type="text/javascript"></script>
         <script src="dist/js/mfContextMenu.js" type="text/javascript"></script>
@@ -23,7 +24,7 @@
             </div>
         </div>
         <script>
-            var cm, be, inp, save, createNode, createSub;
+            var cml, cm, be, inp, save, createNode, createSub;
             var nodes = [
                 {
                     caption: 'Root Node 1',
@@ -84,17 +85,40 @@
                 createNode = document.querySelector('#create_node');
                 createSub = document.querySelector('#create_subnode');
 
-                cm = new mf.TContextMenu({items: [{
-                            caption: 'Expand All',
-                            call: 'expandAll',
+                be = new mf.TBaseTreeView({
+                    element: document.querySelector('div#tree'),
+                    data: nodes,
+                    contextMenuList: [{
+                            name: 'tv-menu',
+                            items: [{
+                                    caption: 'Expand All',
+                                    call: 'expandAll',
+                                }, {
+                                    caption: 'Collapse All',
+                                    call: 'collapseAll',
+                                }]
                         }, {
-                            caption: 'Collapse All',
-                            call: 'collapseAll',
-                        }]});
-                
-                return false;
-                be = new mf.TBaseTreeView({element: document.querySelector(
-                            'div#tree'), data: nodes});
+                            name: 'tv-menu-item',
+                            items: [{
+                                    caption: 'Delete',
+                                    call: 'deleteNode',
+                                }, {
+                                    caption: 'Add new',
+                                    call: 'add',
+                                }]
+                        },
+                    ],
+                    contextMenuMap: [{
+                            menuName: 'tv-menu',
+                            forRole: 'treeview'
+                        },{
+                            menuName: 'tv-menu',
+                            forRole: 'treenode'
+                        },{
+                            menuName: 'tv-menu-item',
+                            forRole: 'treenodecaption'
+                        }]
+                });
 
                 be.element.eventListener('select', function (ev) {
                     inp.value = ev.detail.caption;

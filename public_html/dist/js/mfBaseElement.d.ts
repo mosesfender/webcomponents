@@ -3,7 +3,7 @@ declare module mf {
     const MAIN_ANCESTOR = "mfElement";
     const ANCESTOR_OBJ = "__obj";
     class TBaseElement {
-        cssClass: string;
+        protected _cssClass: string;
         protected _tag: string;
         protected _parent: HTMLElement;
         protected _element: HTMLElement;
@@ -16,6 +16,7 @@ declare module mf {
         element: HTMLElement;
         readonly tag: string;
         contextMenu: mf.TContextMenu | Array<mf.IContextMenuItem>;
+        cssClass: string | Array<string>;
     }
 }
 interface HTMLElement {

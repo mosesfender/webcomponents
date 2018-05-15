@@ -109,6 +109,18 @@ module mf {
             this._element.classList.remove(mf.NODE_CLASSES.NODE_SELECTED);
         }
 
+        public expandAll() {
+            return this._treeView.expandAll.call(this._treeView);
+        }
+
+        public collapseAll() {
+            return this._treeView.collapseAll.call(this._treeView);
+        }
+        
+        public deleteNode(){
+            this.parentNodes.removeNode.call(this.parentNodes, this);
+        }
+
         public addNode(node: mf.TBaseTreeNode);
         public addNode(label: string, data: mf.IBaseNodeData);
         public addNode() {

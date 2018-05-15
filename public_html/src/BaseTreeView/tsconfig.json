@@ -9,8 +9,10 @@
         "outFile": "../../dist/js/mfBaseTreeView.js"
     },
     "files": [
+        "../../@types/common.d.ts",
         "../../dist/js/common.d.ts",
         "../../dist/js/mfBaseElement.d.ts",
+        "../../dist/js/mfContextMenu.d.ts",
         "BaseTreeNode.ts",
         "BaseTreeNodes.ts",
         "BaseTreeView.ts"

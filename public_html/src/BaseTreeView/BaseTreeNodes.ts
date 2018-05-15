@@ -29,7 +29,11 @@ module mf {
         public removeNode(node: mf.TBaseTreeNode, _selidx?: number) {
             let _allidx = this._treeView.all.indexOf(node);
             if (!_selidx) {
+                try{
                 _selidx = this._treeView.selected.indexOf(node);
+                }catch(err){
+                    console.error(err);
+                }
             }
             this.element.removeChild(node.element);
         }
@@ -44,6 +48,17 @@ module mf {
                     this.addNode(node);
                 }
             }
+        }
+
+        /**
+         * @returns {HTMLCollection<HTMLLiElement>}
+         */        
+        public get siblings(){
+            return this.element.children;
+        }
+        
+        public get count(){
+            return this.siblings.length;
         }
 
         public set TreeView(val: mf.TBaseTreeView) {

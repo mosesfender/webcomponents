@@ -99,6 +99,15 @@ var mf;
             this.data.selected = false;
             this._element.classList.remove(mf.NODE_CLASSES.NODE_SELECTED);
         };
+        TBaseTreeNode.prototype.expandAll = function () {
+            return this._treeView.expandAll.call(this._treeView);
+        };
+        TBaseTreeNode.prototype.collapseAll = function () {
+            return this._treeView.collapseAll.call(this._treeView);
+        };
+        TBaseTreeNode.prototype.deleteNode = function () {
+            this.parentNodes.removeNode.call(this.parentNodes, this);
+        };
         TBaseTreeNode.prototype.addNode = function () {
             var args = arguments;
             var ret = {};
@@ -215,7 +224,12 @@ var mf;
         TBaseTreeNodes.prototype.removeNode = function (node, _selidx) {
             var _allidx = this._treeView.all.indexOf(node);
             if (!_selidx) {
-                _selidx = this._treeView.selected.indexOf(node);
+                try {
+                    _selidx = this._treeView.selected.indexOf(node);
+                }
+                catch (err) {
+                    console.error(err);
+                }
             }
             this.element.removeChild(node.element);
         };
@@ -230,6 +244,20 @@ var mf;
                         this.addNode(node);
                     }
                 }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseTreeNodes.prototype, "siblings", {
+            get: function () {
+                return this.element.children;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseTreeNodes.prototype, "count", {
+            get: function () {
+                return this.siblings.length;
             },
             enumerable: true,
             configurable: true
@@ -292,39 +320,6 @@ var mf;
             _this.fire('created');
             return _this;
         }
-        TBaseTreeView.prototype._keyupHandler = function (ev) {
-            var _that = this;
-            if (ev.keyCode == 46) {
-                [].map.call(this.selected, function (node, idx, selected) {
-                    node.parentNodes.removeNode(node, idx);
-                });
-            }
-        };
-        TBaseTreeView.prototype._contextMenuHandler = function (ev) {
-            console.log(this, ev);
-        };
-        TBaseTreeView.prototype._clickHandler = function (ev) {
-            var node;
-            if (ev.target.hasAttribute('data-role')) {
-                switch (ev.target.getAttribute('data-role')) {
-                    case mf.TREE_ROLE.TREE_NODE_LEVER:
-                        node = ev.target.parentElement._getObj();
-                        node.toggle.call(node);
-                        break;
-                    case mf.TREE_ROLE.TREE_NODE_CAPTION:
-                        node = ev.target.parentElement._getObj();
-                        this._select(node);
-                        this.fire('select', node);
-                        break;
-                }
-            }
-        };
-        TBaseTreeView.prototype._dblclickHandler = function (ev) {
-            if (ev.target.tagName == 'B') {
-                var node = ev.target.parentElement._getObj();
-                node.toggle.call(node);
-            }
-        };
         TBaseTreeView.prototype.loadTreeData = function () {
             if (this.data.length) {
                 for (var i = 0; i < this.data.length; i++) {
@@ -332,22 +327,43 @@ var mf;
                     this.nodes.addNode(node);
                 }
             }
+            return this;
         };
         TBaseTreeView.prototype._select = function (node) {
-            this._deselect();
-            if (node.data.selected) {
-                node.unselect();
+            if (node) {
+                this._deselect();
+                if (node.data.selected) {
+                    node.unselect();
+                }
+                else {
+                    node.select();
+                    this._selected.push(node);
+                }
             }
-            else {
-                node.select();
-                this._selected.push(node);
-            }
+            return this;
         };
         TBaseTreeView.prototype._deselect = function (inode) {
             [].map.call(this._selected, function (node, idx, sel) {
                 var _removed = sel.splice(idx, 1)[0];
                 _removed.unselect();
             });
+            return this;
+        };
+        TBaseTreeView.prototype.expandAll = function () {
+            for (var i = 0; i < this.all.length; i++) {
+                if (this.all[i].nodes) {
+                    this.all[i].expand();
+                }
+            }
+            return this;
+        };
+        TBaseTreeView.prototype.collapseAll = function () {
+            for (var i = 0; i < this.all.length; i++) {
+                if (this.all[i].nodes) {
+                    this.all[i].collapse();
+                }
+            }
+            return this;
         };
         Object.defineProperty(TBaseTreeView.prototype, "selected", {
             get: function () {
@@ -383,6 +399,150 @@ var mf;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(TBaseTreeView.prototype, "contextMenuMap", {
+            get: function () {
+                return this._contextMenuMap;
+            },
+            set: function (val) {
+                if (val instanceof mf.TContextMenuMap) {
+                    this._contextMenuMap = val;
+                }
+                if (isArray(val)) {
+                    this._contextMenuMap = new mf.TContextMenuMap(val);
+                }
+                this._contextMenuMap.owner = this;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseTreeView.prototype, "contextMenuList", {
+            get: function () {
+                return this._contextMenuList;
+            },
+            set: function (val) {
+                if (val instanceof mf.TContextMenuList) {
+                    this._contextMenuList = val;
+                }
+                if (isArray(val)) {
+                    this._contextMenuList = new mf.TContextMenuList(this, val);
+                }
+                this._contextMenuList.owner = this;
+                var _that = this;
+                this.on('contentMenuExpand', function () {
+                    _that._contextMenuList.collapseAll.call(_that._contextMenuList);
+                });
+                this.on('click', function () {
+                    if (_that._contextMenuList.expanded) {
+                        _that._contextMenuList.expanded.collapse();
+                    }
+                });
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseTreeView.prototype, "count", {
+            get: function () {
+                var _nodes = this.element.querySelectorAll('li');
+                return _nodes.length;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        TBaseTreeView.prototype.first = function () {
+            return this._findNodeByIndex(0)._getObj();
+        };
+        TBaseTreeView.prototype.last = function () {
+            return this._findNodeByIndex(this.count - 1)._getObj();
+        };
+        TBaseTreeView.prototype.next = function () {
+            return null;
+        };
+        TBaseTreeView.prototype.prev = function () {
+            return null;
+        };
+        TBaseTreeView.prototype.nextSibling = function () {
+            var _sib = this.selected[0].element.nextSibling;
+            if (_sib && !this.selected[0].expanded) {
+                return _sib._getObj();
+            }
+            return null;
+        };
+        TBaseTreeView.prototype.prevSibling = function () {
+            var _sib = this.selected[0].element.previousSibling;
+            if (_sib) {
+                return _sib._getObj();
+            }
+            return null;
+        };
+        TBaseTreeView.prototype._findNodeByIndex = function (idx) {
+            var _nodes = this.element.querySelectorAll('li');
+            return _nodes[idx];
+        };
+        TBaseTreeView.prototype._keyupHandler = function (ev) {
+            var _that = this;
+            if (ev.keyCode == 46) {
+                [].map.call(this.selected, function (node, idx, selected) {
+                    node.parentNodes.removeNode(node, idx);
+                });
+            }
+            if (ev.keyCode == 36) {
+                this._select(this.first());
+            }
+            if (ev.keyCode == 35) {
+                this._select(this.last());
+            }
+            if (ev.keyCode == 38) {
+            }
+            if (ev.keyCode == 40) {
+            }
+        };
+        TBaseTreeView.prototype._contextMenuHandler = function (ev) {
+            var _expander = ev.target.closest('[data-role]');
+            var _role = _expander.getAttribute('data-role');
+            if (!_expander._getObj()) {
+                var _obj = null;
+                var _p = _expander;
+                var ret = false;
+                while (!ret) {
+                    _p = _p.parentElement;
+                    _obj = _p._getObj();
+                    if (_obj instanceof mf.TBaseElement) {
+                        _expander = _obj.element;
+                        ret = true;
+                    }
+                }
+            }
+            if (_role) {
+                var _menuName = this._contextMenuMap.getMenuByRole(_role);
+                var _menu = this._contextMenuList.getMenu(_menuName);
+                if (_menu) {
+                    _menu.expander = _expander._getObj();
+                    _menu.expand(ev);
+                }
+            }
+        };
+        TBaseTreeView.prototype._clickHandler = function (ev) {
+            var node;
+            if (ev.target.hasAttribute('data-role')) {
+                switch (ev.target.getAttribute('data-role')) {
+                    case mf.TREE_ROLE.TREE_NODE_LEVER:
+                        node = ev.target.parentElement._getObj();
+                        node.toggle.call(node);
+                        break;
+                    case mf.TREE_ROLE.TREE_NODE_CAPTION:
+                        node = ev.target.parentElement._getObj();
+                        this._select(node);
+                        this.fire('select', node);
+                        break;
+                }
+            }
+        };
+        TBaseTreeView.prototype._dblclickHandler = function (ev) {
+            if (ev.target.tagName == 'B') {
+                var node = ev.target.parentElement._getObj();
+                node.toggle.call(node);
+            }
+        };
         return TBaseTreeView;
     }(mf.TBaseElement));
     mf.TBaseTreeView = TBaseTreeView;

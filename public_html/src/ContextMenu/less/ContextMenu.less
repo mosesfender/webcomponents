@@ -1,0 +1,38 @@
+@color-main: rgba(34, 34, 34, .8);
+@color-back: #ffffff;
+@color-back-hover: #dddddd;
+
+.mf-context_menu {
+    font-family: sans-serif;
+    font-size: .7em;
+
+    position: absolute;
+    box-shadow: .2em .2em .6em @color-main;
+    display: none;
+    opacity: 0;
+    /*transition: all .2s ease-in-out 0s;*/
+    background-color: @color-back;
+
+    &.expanded {
+        display: block;
+        opacity: 1;
+    }
+
+    b {
+        font-style: normal;
+        font-weight: normal;
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        li {
+            padding: .5em 1em;
+            cursor: pointer;
+            &:hover {
+                background-color: @color-back-hover;
+            }
+        }
+    }
+}

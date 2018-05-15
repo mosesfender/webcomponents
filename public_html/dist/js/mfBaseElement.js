@@ -80,6 +80,22 @@ var mf;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(TBaseElement.prototype, "cssClass", {
+            get: function () {
+                return this._cssClass;
+            },
+            set: function (val) {
+                if (isArray(val)) {
+                    this._cssClass = val.join(' ');
+                }
+                else {
+                    this._cssClass = val.toString();
+                }
+                this.element.classList.addMany(this._cssClass);
+            },
+            enumerable: true,
+            configurable: true
+        });
         return TBaseElement;
     }());
     mf.TBaseElement = TBaseElement;
