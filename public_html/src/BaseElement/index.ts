@@ -9,6 +9,7 @@ module mf {
         protected _parent: HTMLElement;
         protected _element: HTMLElement;
         protected _contextMenu: mf.TContextMenu | Array<mf.IContextMenuItem> | null;
+        protected _monitor: mf.TBaseLogger | string | null;
 
         constructor(options) {
             this._innerInit(options);
@@ -20,7 +21,6 @@ module mf {
                 }
                 this._element[ANCESTOR_OBJ] = this;
             }
-
         }
 
         protected _innerInit(options?) {
@@ -35,7 +35,7 @@ module mf {
 
         public on(atype: string, func: Function, capture?: Object): Array<any> {
             if (this.element) {
-                return this.element.eventListener(atype, func, capture);
+                return (this.element as HTMLElement).eventListener(atype, func, capture);
             }
         }
 
@@ -53,7 +53,11 @@ module mf {
         }
 
         public set element(el: HTMLElement) {
-            this._element = el;
+            if (typeof el == 'string') {
+                this._element = document.querySelector(el) as HTMLElement;
+            } else {
+                this._element = el as HTMLElement;
+            }
         }
 
         public get element() {
@@ -92,7 +96,47 @@ module mf {
             } else {
                 this._cssClass = val.toString();
             }
-            this.element.classList.addMany(this._cssClass);
+            (this.element as HTMLElement).classList.addMany(this._cssClass);
+        }
+
+        public set monitor(val) {
+            this._monitor = val;
+        }
+
+        public get monitor() {
+            if (typeof this._monitor == 'string') {
+                if (window.hasOwnProperty(this._monitor)) {
+                    this._monitor = window[this._monitor];
+                }
+            }
+            return this._monitor;
+        }
+
+        /* Provide methods of Logger */
+        protected _logMessage(messageType: mf.MessageType, message: string | Array<string>) {
+            if (this.monitor instanceof mf.TBaseLogger) {
+                this.monitor.log(messageType, message);
+            }
+        }
+
+        public set danger(val: string | Array<string>) {
+            this._logMessage(mf.MessageType.MESS_DANGER, val);
+        }
+
+        public set warning(val: string | Array<string>) {
+            this._logMessage(mf.MessageType.MESS_WARNING, val);
+        }
+
+        public set success(val: string | Array<string>) {
+            this._logMessage(mf.MessageType.MESS_SUCCESS, val);
+        }
+
+        public set info(val: string | Array<string>) {
+            this._logMessage(mf.MessageType.MESS_INFO, val);
+        }
+
+        public set message(val: string | Array<string>) {
+            this._logMessage(mf.MessageType.MESS_DEFAULT, val);
         }
     }
 

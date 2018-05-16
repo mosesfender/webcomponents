@@ -2,6 +2,7 @@ declare namespace Objects {
     function extend(first: Object, second: Object): void;
     function extendWithExcludes(first: Object, second: Object, excludes?: Array<String>): void;
     function objectToQueryStr(obj: Object): string;
+    function compileGetUrl(url: string, params: Object): string;
 }
 declare namespace Html {
     function empty(el: HTMLElement): void;

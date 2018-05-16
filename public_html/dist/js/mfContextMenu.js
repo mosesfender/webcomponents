@@ -117,7 +117,6 @@ var mf;
                             _menuObj = _menuElement._getObj();
                             if (_menuObj && _menuObj.expander) {
                                 try {
-                                    console.info(_menuObj.expander, _menuItemObj.call);
                                     _menuObj.expander[_menuItemObj.call].call(_menuObj.expander);
                                 }
                                 catch (err) {

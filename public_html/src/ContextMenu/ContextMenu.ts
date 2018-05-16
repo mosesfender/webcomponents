@@ -36,6 +36,7 @@ module mf {
             } else {
                 this.element = Html.createElementEx('div', document.body) as HTMLElement;
             }
+            
             this.element.classList.add(mf.DEF_CONTEXTMENU_CSSCLASS);
             this.element.setAttribute('data-role', mf.DEF_CONTEXTMENU_ROLE);
             if (options.hasOwnProperty('items')) {

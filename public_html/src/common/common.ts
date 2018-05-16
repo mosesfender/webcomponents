@@ -28,6 +28,10 @@ namespace Objects {
         }
         return _tmp.length ? '?' + _tmp.join('&') : '';
     }
+    
+    export function compileGetUrl(url: string, params: Object){
+        return url + Objects.objectToQueryStr(params);
+    }
 }
 
 namespace Html {

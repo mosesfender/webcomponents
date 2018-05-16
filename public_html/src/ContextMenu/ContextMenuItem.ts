@@ -38,7 +38,7 @@ module mf {
                             _menuObj = (_menuElement as HTMLElement)._getObj() as mf.TContextMenu;
                             if (_menuObj && _menuObj.expander) {
                                 try {
-                                    console.info(_menuObj.expander, (_menuItemObj as mf.TContextMenuItem).call);
+                                    //console.info(_menuObj.expander, (_menuItemObj as mf.TContextMenuItem).call);
                                     _menuObj.expander[(_menuItemObj as mf.TContextMenuItem).call].call(_menuObj.expander);
                                 } catch (err) {
                                     console.info(_menuObj.expander);

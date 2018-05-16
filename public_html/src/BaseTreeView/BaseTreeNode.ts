@@ -32,10 +32,7 @@ module mf {
 
             this.data.selected = false;
             if (this.data.children && this.data.children.length) {
-                this._nodes = new mf.TBaseTreeNodes({
-                    parent: this.element,
-                    TreeView: this._treeView
-                });
+                this._createNodes();
                 this._nodes.nodes = this.data.children;
 
                 /** Collapse or expand at data expanded value */
@@ -116,8 +113,8 @@ module mf {
         public collapseAll() {
             return this._treeView.collapseAll.call(this._treeView);
         }
-        
-        public deleteNode(){
+
+        public deleteNode() {
             this.parentNodes.removeNode.call(this.parentNodes, this);
         }
 
@@ -150,8 +147,6 @@ module mf {
             }
             return this.nodes;
         }
-
-
 
         public get parentNodes() {
             return this.parent[mf.ANCESTOR_OBJ] as mf.TBaseTreeNodes;

@@ -30,10 +30,7 @@ var mf;
             _this.caption = _this.data.caption;
             _this.data.selected = false;
             if (_this.data.children && _this.data.children.length) {
-                _this._nodes = new mf.TBaseTreeNodes({
-                    parent: _this.element,
-                    TreeView: _this._treeView
-                });
+                _this._createNodes();
                 _this._nodes.nodes = _this.data.children;
                 _this.data.expanded ? _this._handlerExpand.call(_this) : _this._handlerCollapse.call(_this);
             }
@@ -255,6 +252,13 @@ var mf;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(TBaseTreeNodes.prototype, "ownNode", {
+            get: function () {
+                return this.element.parentElement._getObj();
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(TBaseTreeNodes.prototype, "count", {
             get: function () {
                 return this.siblings.length;
@@ -300,7 +304,7 @@ var mf;
             var _that = _this;
             _this.element.setAttribute('data-role', TREE_ROLE.TREE_VIEW);
             _this.element.classList.add('mf-tree');
-            _this._nodes = new mf.TBaseTreeNodes({ parent: _this.element, TreeView: _this });
+            _this._createNodes();
             document.addEventListener('keyup', function (ev) {
                 _that._keyupHandler.call(_that, ev);
             });
@@ -320,6 +324,10 @@ var mf;
             _this.fire('created');
             return _this;
         }
+        TBaseTreeView.prototype._createNodes = function () {
+            this._nodes = new mf.TBaseTreeNodes({ parent: this.element, TreeView: this });
+            return this;
+        };
         TBaseTreeView.prototype.loadTreeData = function () {
             if (this.data.length) {
                 for (var i = 0; i < this.data.length; i++) {

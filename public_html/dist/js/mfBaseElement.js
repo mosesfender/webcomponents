@@ -51,7 +51,12 @@ var mf;
                 return this._element;
             },
             set: function (el) {
-                this._element = el;
+                if (typeof el == 'string') {
+                    this._element = document.querySelector(el);
+                }
+                else {
+                    this._element = el;
+                }
             },
             enumerable: true,
             configurable: true
@@ -92,6 +97,61 @@ var mf;
                     this._cssClass = val.toString();
                 }
                 this.element.classList.addMany(this._cssClass);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseElement.prototype, "monitor", {
+            get: function () {
+                if (typeof this._monitor == 'string') {
+                    if (window.hasOwnProperty(this._monitor)) {
+                        this._monitor = window[this._monitor];
+                    }
+                }
+                return this._monitor;
+            },
+            set: function (val) {
+                this._monitor = val;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        TBaseElement.prototype._logMessage = function (messageType, message) {
+            if (this.monitor instanceof mf.TBaseLogger) {
+                this.monitor.log(messageType, message);
+            }
+        };
+        Object.defineProperty(TBaseElement.prototype, "danger", {
+            set: function (val) {
+                this._logMessage(mf.MessageType.MESS_DANGER, val);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseElement.prototype, "warning", {
+            set: function (val) {
+                this._logMessage(mf.MessageType.MESS_WARNING, val);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseElement.prototype, "success", {
+            set: function (val) {
+                this._logMessage(mf.MessageType.MESS_SUCCESS, val);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseElement.prototype, "info", {
+            set: function (val) {
+                this._logMessage(mf.MessageType.MESS_INFO, val);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseElement.prototype, "message", {
+            set: function (val) {
+                this._logMessage(mf.MessageType.MESS_DEFAULT, val);
             },
             enumerable: true,
             configurable: true

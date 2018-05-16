@@ -29,6 +29,10 @@ var Objects;
         return _tmp.length ? '?' + _tmp.join('&') : '';
     }
     Objects.objectToQueryStr = objectToQueryStr;
+    function compileGetUrl(url, params) {
+        return url + Objects.objectToQueryStr(params);
+    }
+    Objects.compileGetUrl = compileGetUrl;
 })(Objects || (Objects = {}));
 var Html;
 (function (Html) {

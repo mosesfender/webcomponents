@@ -57,6 +57,10 @@ module mf {
             return this.element.children;
         }
         
+        public get ownNode(){
+            return this.element.parentElement._getObj() as mf.TBaseTreeNode;
+        }
+        
         public get count(){
             return this.siblings.length;
         }

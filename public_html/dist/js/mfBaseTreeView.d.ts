@@ -55,6 +55,7 @@ declare module mf {
         removeNode(node: mf.TBaseTreeNode, _selidx?: number): void;
         nodes: Array<mf.IBaseNodeData>;
         readonly siblings: HTMLCollection;
+        readonly ownNode: TBaseTreeNode;
         readonly count: number;
         TreeView: mf.TBaseTreeView;
         readonly tag: string;
@@ -85,6 +86,7 @@ declare module mf {
         protected _contextMenuList: mf.TContextMenuList;
         protected _contextMenuMap: mf.TContextMenuMap;
         constructor(options: any);
+        protected _createNodes(): this;
         loadTreeData(): this;
         protected _select(node: mf.TBaseTreeNode): this;
         protected _deselect(inode?: mf.TBaseTreeNode): this;

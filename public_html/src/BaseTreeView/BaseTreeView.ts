@@ -38,9 +38,9 @@ module mf {
         constructor(options) {
             super(options);
             let _that = this;
-            this.element.setAttribute('data-role', TREE_ROLE.TREE_VIEW);
-            this.element.classList.add('mf-tree');
-            this._nodes = new mf.TBaseTreeNodes({parent: this.element, TreeView: this});
+            (this.element as HTMLElement).setAttribute('data-role', TREE_ROLE.TREE_VIEW);
+            (this.element as HTMLElement).classList.add('mf-tree');
+            this._createNodes();
 
             document.addEventListener('keyup', function (ev: Event) {
                 _that._keyupHandler.call(_that, ev);
@@ -65,6 +65,11 @@ module mf {
             });
 
             this.fire('created');
+        }
+
+        protected _createNodes(){
+            this._nodes = new mf.TBaseTreeNodes({parent: this.element, TreeView: this});
+            return this;
         }
 
         public loadTreeData() {
@@ -178,7 +183,7 @@ module mf {
         }
 
         public get count() {
-            let _nodes = this.element.querySelectorAll('li');
+            let _nodes = (this.element as HTMLElement).querySelectorAll('li');
             return _nodes.length;
         }
 
@@ -199,7 +204,7 @@ module mf {
         }
 
         public nextSibling(): mf.TBaseTreeNode {
-            let _sib = this.selected[0].element.nextSibling as HTMLElement;
+            let _sib = (this.selected[0].element as HTMLElement).nextSibling as HTMLElement;
             if (_sib && !this.selected[0].expanded) {
                 return _sib._getObj() as mf.TBaseTreeNode;
             }
@@ -207,7 +212,7 @@ module mf {
         }
 
         public prevSibling(): mf.TBaseTreeNode {
-            let _sib = this.selected[0].element.previousSibling as HTMLElement;
+            let _sib = (this.selected[0].element as HTMLElement).previousSibling as HTMLElement;
             if (_sib) {
                 return _sib._getObj() as mf.TBaseTreeNode;
             }
@@ -215,7 +220,7 @@ module mf {
         }
 
         private _findNodeByIndex(idx: number) {
-            let _nodes = this.element.querySelectorAll('li');
+            let _nodes = (this.element as HTMLElement).querySelectorAll('li');
             return _nodes[idx];
         }
 
@@ -267,7 +272,7 @@ module mf {
                     _p = _p.parentElement;
                     _obj = _p._getObj();
                     if (_obj instanceof mf.TBaseElement) {
-                        _expander = _obj.element;
+                        _expander = _obj.element as HTMLElement;
                         ret = true;
                     }
                 }
