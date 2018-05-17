@@ -104,9 +104,10 @@ var mf;
             return _this;
         }
         TContextMenuItem.prototype._innerInit = function (options) {
+            var _that = this;
             this.element = Html.createElementEx('li', options['parent'], { 'class': options['cssClass'] || '' });
             this._captionElement = Html.createElementEx('b', this.element);
-            this._captionElement.eventListener('click', function (ev) {
+            this._captionElement.parentElement.eventListener('click', function (ev) {
                 var _menuItemElement, _menuItemObj, _menuElement, _menuObj;
                 _menuItemElement = ev.target.closest(['[', mf.ATTRIBUTE_ANCESTOR, ']'].join(''));
                 if (_menuItemElement) {
@@ -126,6 +127,7 @@ var mf;
                         }
                     }
                 }
+                _that.parent.parentElement._getObj().collapse();
             });
         };
         Object.defineProperty(TContextMenuItem.prototype, "caption", {

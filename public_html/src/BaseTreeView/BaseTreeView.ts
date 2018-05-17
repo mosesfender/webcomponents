@@ -15,6 +15,7 @@ module mf {
         TREE_NODE = 'treenode',
         TREE_NODE_LEVER = 'treenodelever',
         TREE_NODE_CAPTION = 'treenodecaption',
+        TREE_NODE_COUNTRY_CAPTION = 'countrylever',
     }
 
     /**
@@ -67,7 +68,7 @@ module mf {
             this.fire('created');
         }
 
-        protected _createNodes(){
+        protected _createNodes() {
             this._nodes = new mf.TBaseTreeNodes({parent: this.element, TreeView: this});
             return this;
         }
@@ -297,6 +298,7 @@ module mf {
                         break;
 
                     case mf.TREE_ROLE.TREE_NODE_CAPTION:
+                    case mf.TREE_ROLE.TREE_NODE_COUNTRY_CAPTION:
                         node = (ev.target as HTMLElement).parentElement._getObj() as mf.TBaseTreeNode;
                         this._select(node);
                         this.fire('select', node);

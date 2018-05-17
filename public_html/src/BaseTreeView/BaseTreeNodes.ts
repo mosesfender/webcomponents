@@ -29,17 +29,25 @@ module mf {
         public removeNode(node: mf.TBaseTreeNode, _selidx?: number) {
             let _allidx = this._treeView.all.indexOf(node);
             if (!_selidx) {
-                try{
-                _selidx = this._treeView.selected.indexOf(node);
-                }catch(err){
+                try {
+                    _selidx = this._treeView.selected.indexOf(node);
+                } catch (err) {
                     console.error(err);
                 }
             }
             this.element.removeChild(node.element);
+            node = null;
+        }
+
+        protected _removeNodes() {
+            while (this.element.firstChild) {
+                this.removeNode((this.element.firstChild as HTMLElement)._getObj() as mf.TBaseTreeNode);
+            }
         }
 
         public set nodes(val: Array<mf.IBaseNodeData>) {
             if (val.length) {
+                this._removeNodes();
                 for (let i = 0; i < val.length; i++) {
                     let node = new mf.TBaseTreeNode({
                         data: val[i],
@@ -52,16 +60,16 @@ module mf {
 
         /**
          * @returns {HTMLCollection<HTMLLiElement>}
-         */        
-        public get siblings(){
+         */
+        public get siblings() {
             return this.element.children;
         }
-        
-        public get ownNode(){
+
+        public get ownNode() {
             return this.element.parentElement._getObj() as mf.TBaseTreeNode;
         }
-        
-        public get count(){
+
+        public get count() {
             return this.siblings.length;
         }
 

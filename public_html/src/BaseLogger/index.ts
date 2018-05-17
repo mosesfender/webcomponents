@@ -36,6 +36,7 @@ module mf {
             [].map.call(_m, function (str) {
                 Html.createElementEx(mf.LogMessageTag, _that._log, {'class': messageType}, str);
             });
+            this.element.scrollTop = this.element.scrollHeight - this.element.clientHeight;
         }
 
         public set danger(val: string | Array<string>) {

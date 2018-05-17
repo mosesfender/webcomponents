@@ -20,11 +20,11 @@ declare module mf {
         cssClass: string | Array<string>;
         monitor: string | TBaseLogger;
         protected _logMessage(messageType: mf.MessageType, message: string | Array<string>): void;
-        danger: string | Array<string>;
-        warning: string | Array<string>;
-        success: string | Array<string>;
-        info: string | Array<string>;
-        message: string | Array<string>;
+        danger: any;
+        warning: any;
+        success: any;
+        info: any;
+        message: any;
     }
 }
 interface HTMLElement {

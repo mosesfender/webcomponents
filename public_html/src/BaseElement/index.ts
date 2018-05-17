@@ -119,23 +119,23 @@ module mf {
             }
         }
 
-        public set danger(val: string | Array<string>) {
+        public set danger(val: any) {
             this._logMessage(mf.MessageType.MESS_DANGER, val);
         }
 
-        public set warning(val: string | Array<string>) {
+        public set warning(val: any) {
             this._logMessage(mf.MessageType.MESS_WARNING, val);
         }
 
-        public set success(val: string | Array<string>) {
+        public set success(val: any) {
             this._logMessage(mf.MessageType.MESS_SUCCESS, val);
         }
 
-        public set info(val: string | Array<string>) {
+        public set info(val: any) {
             this._logMessage(mf.MessageType.MESS_INFO, val);
         }
 
-        public set message(val: string | Array<string>) {
+        public set message(val: any) {
             this._logMessage(mf.MessageType.MESS_DEFAULT, val);
         }
     }

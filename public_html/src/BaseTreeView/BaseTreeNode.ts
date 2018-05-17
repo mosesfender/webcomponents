@@ -14,11 +14,12 @@ module mf {
 
     export enum NODE_CLASSES {
         NODE_SELECTED = 'selected',
+        NODE_LEVER_ICON_CLASS = 'icon-arrow-right2',
+        NODE_LEVER_ICON_CLASS_NOCHILD = 'icon-radio-unchecked',
+        NODE_LEVER_BUSY = 'icon-spinner9',
     }
 
     export class TBaseTreeNode extends mf.TBaseElement {
-        public leverIconClass: string = 'icon-arrow-right';
-        public leverIconClassNoChild: string = 'icon-circle-o';
         protected _treeView: mf.TBaseTreeView;
         protected _nodes: TBaseTreeNodes;
         protected _label: HTMLElement;
@@ -45,10 +46,20 @@ module mf {
 
         protected _innerInit() {
             try {
-                this._colapseLever = Html.createElementEx('i', this.element, {'class': this.leverIconClass, 'data-role': mf.TREE_ROLE.TREE_NODE_LEVER}) as HTMLElement;
+                this._data = <mf.IBaseNodeData> {};
+                this._colapseLever = Html.createElementEx('i', this.element, {'class': mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS, 'data-role': mf.TREE_ROLE.TREE_NODE_LEVER}) as HTMLElement;
                 this._label = Html.createElementEx('b', this.element, {'data-role': mf.TREE_ROLE.TREE_NODE_CAPTION}) as HTMLElement;
             } catch (err) {
 
+            }
+        }
+
+        public busy(val: boolean) {
+            if (val) {
+                this._colapseLever.classList.removeMany([mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS_NOCHILD, mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS]);
+                this._colapseLever.classList.add(mf.NODE_CLASSES.NODE_LEVER_BUSY);
+            } else {
+                this._hasChild();
             }
         }
 
@@ -85,24 +96,28 @@ module mf {
         }
 
         protected _hasChild() {
-            if (this.data.hasOwnProperty('children') && this.data.children.length) {
-                this._colapseLever.classList.remove(this.leverIconClassNoChild);
-                this._colapseLever.classList.add(this.leverIconClass);
+            if (this.nodes && this.nodes.count) {
+                this._colapseLever.classList.removeMany([mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS_NOCHILD, mf.NODE_CLASSES.NODE_LEVER_BUSY]);
+                this._colapseLever.classList.add(mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS);
                 return true;
             } else {
-                this._colapseLever.classList.remove(this.leverIconClass);
-                this._colapseLever.classList.add(this.leverIconClassNoChild);
+                this._colapseLever.classList.removeMany([mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS, mf.NODE_CLASSES.NODE_LEVER_BUSY]);
+                this._colapseLever.classList.add(mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS_NOCHILD);
                 return false;
             }
         }
 
         public select() {
-            this.data.selected = true;
+            if (this.data) {
+                this.data.selected = true;
+            }
             this._element.classList.add(mf.NODE_CLASSES.NODE_SELECTED);
         }
 
         public unselect() {
-            this.data.selected = false;
+            if (this.data) {
+                this.data.selected = false;
+            }
             this._element.classList.remove(mf.NODE_CLASSES.NODE_SELECTED);
         }
 

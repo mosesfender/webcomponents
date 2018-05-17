@@ -44,6 +44,7 @@ var mf;
             [].map.call(_m, function (str) {
                 Html.createElementEx(mf.LogMessageTag, _that._log, { 'class': messageType }, str);
             });
+            this.element.scrollTop = this.element.scrollHeight - this.element.clientHeight;
         };
         Object.defineProperty(TBaseLogger.prototype, "danger", {
             set: function (val) {

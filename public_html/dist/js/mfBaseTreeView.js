@@ -19,13 +19,14 @@ var mf;
     var NODE_CLASSES;
     (function (NODE_CLASSES) {
         NODE_CLASSES["NODE_SELECTED"] = "selected";
+        NODE_CLASSES["NODE_LEVER_ICON_CLASS"] = "icon-arrow-right2";
+        NODE_CLASSES["NODE_LEVER_ICON_CLASS_NOCHILD"] = "icon-radio-unchecked";
+        NODE_CLASSES["NODE_LEVER_BUSY"] = "icon-spinner9";
     })(NODE_CLASSES = mf.NODE_CLASSES || (mf.NODE_CLASSES = {}));
     var TBaseTreeNode = (function (_super) {
         __extends(TBaseTreeNode, _super);
         function TBaseTreeNode(options) {
             var _this = _super.call(this, options) || this;
-            _this.leverIconClass = 'icon-arrow-right';
-            _this.leverIconClassNoChild = 'icon-circle-o';
             _this.element.setAttribute('data-role', mf.TREE_ROLE.TREE_NODE);
             _this.caption = _this.data.caption;
             _this.data.selected = false;
@@ -42,10 +43,20 @@ var mf;
         }
         TBaseTreeNode.prototype._innerInit = function () {
             try {
-                this._colapseLever = Html.createElementEx('i', this.element, { 'class': this.leverIconClass, 'data-role': mf.TREE_ROLE.TREE_NODE_LEVER });
+                this._data = {};
+                this._colapseLever = Html.createElementEx('i', this.element, { 'class': mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS, 'data-role': mf.TREE_ROLE.TREE_NODE_LEVER });
                 this._label = Html.createElementEx('b', this.element, { 'data-role': mf.TREE_ROLE.TREE_NODE_CAPTION });
             }
             catch (err) {
+            }
+        };
+        TBaseTreeNode.prototype.busy = function (val) {
+            if (val) {
+                this._colapseLever.classList.removeMany([mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS_NOCHILD, mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS]);
+                this._colapseLever.classList.add(mf.NODE_CLASSES.NODE_LEVER_BUSY);
+            }
+            else {
+                this._hasChild();
             }
         };
         TBaseTreeNode.prototype.toggle = function () {
@@ -77,23 +88,27 @@ var mf;
             this._hasChild();
         };
         TBaseTreeNode.prototype._hasChild = function () {
-            if (this.data.hasOwnProperty('children') && this.data.children.length) {
-                this._colapseLever.classList.remove(this.leverIconClassNoChild);
-                this._colapseLever.classList.add(this.leverIconClass);
+            if (this.nodes && this.nodes.count) {
+                this._colapseLever.classList.removeMany([mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS_NOCHILD, mf.NODE_CLASSES.NODE_LEVER_BUSY]);
+                this._colapseLever.classList.add(mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS);
                 return true;
             }
             else {
-                this._colapseLever.classList.remove(this.leverIconClass);
-                this._colapseLever.classList.add(this.leverIconClassNoChild);
+                this._colapseLever.classList.removeMany([mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS, mf.NODE_CLASSES.NODE_LEVER_BUSY]);
+                this._colapseLever.classList.add(mf.NODE_CLASSES.NODE_LEVER_ICON_CLASS_NOCHILD);
                 return false;
             }
         };
         TBaseTreeNode.prototype.select = function () {
-            this.data.selected = true;
+            if (this.data) {
+                this.data.selected = true;
+            }
             this._element.classList.add(mf.NODE_CLASSES.NODE_SELECTED);
         };
         TBaseTreeNode.prototype.unselect = function () {
-            this.data.selected = false;
+            if (this.data) {
+                this.data.selected = false;
+            }
             this._element.classList.remove(mf.NODE_CLASSES.NODE_SELECTED);
         };
         TBaseTreeNode.prototype.expandAll = function () {
@@ -229,10 +244,17 @@ var mf;
                 }
             }
             this.element.removeChild(node.element);
+            node = null;
+        };
+        TBaseTreeNodes.prototype._removeNodes = function () {
+            while (this.element.firstChild) {
+                this.removeNode(this.element.firstChild._getObj());
+            }
         };
         Object.defineProperty(TBaseTreeNodes.prototype, "nodes", {
             set: function (val) {
                 if (val.length) {
+                    this._removeNodes();
                     for (var i = 0; i < val.length; i++) {
                         var node = new mf.TBaseTreeNode({
                             data: val[i],
@@ -293,6 +315,7 @@ var mf;
         TREE_ROLE["TREE_NODE"] = "treenode";
         TREE_ROLE["TREE_NODE_LEVER"] = "treenodelever";
         TREE_ROLE["TREE_NODE_CAPTION"] = "treenodecaption";
+        TREE_ROLE["TREE_NODE_COUNTRY_CAPTION"] = "countrylever";
     })(TREE_ROLE = mf.TREE_ROLE || (mf.TREE_ROLE = {}));
     var TBaseTreeView = (function (_super) {
         __extends(TBaseTreeView, _super);
@@ -538,6 +561,7 @@ var mf;
                         node.toggle.call(node);
                         break;
                     case mf.TREE_ROLE.TREE_NODE_CAPTION:
+                    case mf.TREE_ROLE.TREE_NODE_COUNTRY_CAPTION:
                         node = ev.target.parentElement._getObj();
                         this._select(node);
                         this.fire('select', node);

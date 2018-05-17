@@ -35,8 +35,8 @@ declare interface DOMTokenList {
     remove(...token: string[]): void;
     toString(): string;
     toggle(token: string, force?: boolean): boolean;
-    addMany(classes: string): void;
-    removeMany(classes: string): void;
+    addMany(classes: string | Array<string>): void;
+    removeMany(classes: string | Array<string>): void;
     [index: number]: string;
 }
 

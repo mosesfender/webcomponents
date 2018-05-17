@@ -12,10 +12,11 @@ declare module mf {
     }
     enum NODE_CLASSES {
         NODE_SELECTED = "selected",
+        NODE_LEVER_ICON_CLASS = "icon-arrow-right2",
+        NODE_LEVER_ICON_CLASS_NOCHILD = "icon-radio-unchecked",
+        NODE_LEVER_BUSY = "icon-spinner9",
     }
     class TBaseTreeNode extends mf.TBaseElement {
-        leverIconClass: string;
-        leverIconClassNoChild: string;
         protected _treeView: mf.TBaseTreeView;
         protected _nodes: TBaseTreeNodes;
         protected _label: HTMLElement;
@@ -23,6 +24,7 @@ declare module mf {
         protected _data: mf.IBaseNodeData;
         constructor(options: any);
         protected _innerInit(): void;
+        busy(val: boolean): void;
         toggle(): void;
         expand(): void;
         protected _handlerExpand(): void;
@@ -53,6 +55,7 @@ declare module mf {
         addNode(node: mf.TBaseTreeNode): any;
         addNode(label: string, data: mf.IBaseNodeData): any;
         removeNode(node: mf.TBaseTreeNode, _selidx?: number): void;
+        protected _removeNodes(): void;
         nodes: Array<mf.IBaseNodeData>;
         readonly siblings: HTMLCollection;
         readonly ownNode: TBaseTreeNode;
@@ -76,6 +79,7 @@ declare module mf {
         TREE_NODE = "treenode",
         TREE_NODE_LEVER = "treenodelever",
         TREE_NODE_CAPTION = "treenodecaption",
+        TREE_NODE_COUNTRY_CAPTION = "countrylever",
     }
     class TBaseTreeView extends mf.TBaseElement implements mf.INodesExplore {
         protected _nodes: TBaseTreeNodes;
