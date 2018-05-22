@@ -198,6 +198,10 @@ module mf {
             this._treeView = val;
         }
 
+        public get TreeView() {
+            return this._treeView;
+        }
+
         public get tag() {
             return 'li';
         }

@@ -191,6 +191,9 @@ var mf;
             configurable: true
         });
         Object.defineProperty(TBaseTreeNode.prototype, "TreeView", {
+            get: function () {
+                return this._treeView;
+            },
             set: function (val) {
                 this._treeView = val;
             },
