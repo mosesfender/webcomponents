@@ -404,7 +404,7 @@ function _dopr_fmtnum(value, base, dosign, ljust, len, zpad) {
     var signvalue = '';
     var uvalue;
     var place = 0;
-    var padlen;
+    var padlen = 0;
     var caps = 0;
     var convert;
     var output;

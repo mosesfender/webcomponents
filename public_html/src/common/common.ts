@@ -462,7 +462,7 @@ function _dopr_fmtnum(value, base, dosign, ljust, len, zpad) {
     var signvalue = '';
     var uvalue: number;
     var place = 0;
-    var padlen;		// amount to pad
+    var padlen = 0;		// amount to pad
     var caps = 0;
     var convert;
     var output;
@@ -504,7 +504,6 @@ function _dopr_fmtnum(value, base, dosign, ljust, len, zpad) {
     padlen = len - place;
     if (padlen < 0) padlen = 0;
     if (ljust) padlen = -padlen;
-
     if (zpad && padlen > 0) {
         if (signvalue) {
             output += signvalue;
