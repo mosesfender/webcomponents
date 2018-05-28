@@ -16,6 +16,7 @@ module mf {
         TREE_NODE_LEVER = 'treenodelever',
         TREE_NODE_CAPTION = 'treenodecaption',
         TREE_NODE_COUNTRY_CAPTION = 'countrylever',
+        TREE_NODE_GEONAME_CAPTION = 'geonamelever',
     }
 
     /**

@@ -319,6 +319,7 @@ var mf;
         TREE_ROLE["TREE_NODE_LEVER"] = "treenodelever";
         TREE_ROLE["TREE_NODE_CAPTION"] = "treenodecaption";
         TREE_ROLE["TREE_NODE_COUNTRY_CAPTION"] = "countrylever";
+        TREE_ROLE["TREE_NODE_GEONAME_CAPTION"] = "geonamelever";
     })(TREE_ROLE = mf.TREE_ROLE || (mf.TREE_ROLE = {}));
     var TBaseTreeView = (function (_super) {
         __extends(TBaseTreeView, _super);

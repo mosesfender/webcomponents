@@ -121,7 +121,7 @@ var mf;
                                     _menuObj.expander[_menuItemObj.call].call(_menuObj.expander);
                                 }
                                 catch (err) {
-                                    console.info(_menuObj.expander);
+                                    console.error(err, _menuObj.expander);
                                 }
                             }
                         }

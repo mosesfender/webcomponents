@@ -42,7 +42,7 @@ module mf {
                                     //console.info(_menuObj.expander, (_menuItemObj as mf.TContextMenuItem).call);
                                     _menuObj.expander[(_menuItemObj as mf.TContextMenuItem).call].call(_menuObj.expander);
                                 } catch (err) {
-                                    console.info(_menuObj.expander);
+                                    console.error(err, _menuObj.expander);
                                 }
                             }
                         }
