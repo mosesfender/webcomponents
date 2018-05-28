@@ -3,16 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/src/BaseTreeView/BaseTreeView.ts</file>
             <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/src/BaseModal/index.ts</file>
-            <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/src/BaseModal/tsconfig.json</file>
-            <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/src/BaseLogger/index.ts</file>
-            <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/dist/js/mfBaseModal.d.ts</file>
-            <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/src/ContextMenu/ContextMenu.ts</file>
-            <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/src/BaseTreeView/BaseTreeNode.ts</file>
-            <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/dist/js/mfContextMenu.d.ts</file>
-            <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/dist/js/mfBaseTreeView.d.ts</file>
-            <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/src/BaseModal/less/BaseModal.less</file>
             <file>file:/D:/Projects/JSComponents/mfWebComponents/public_html/src/ContextMenu/ContextMenuItem.ts</file>
         </group>
     </open-files>

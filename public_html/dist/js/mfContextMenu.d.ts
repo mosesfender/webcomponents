@@ -48,6 +48,7 @@ declare module mf {
         protected _innerInit(options?: Object): void;
         caption: string;
         cssClass: string | Array<string>;
+        readonly ownMenu: TContextMenu;
         readonly items: IContextMenuItem[];
     }
 }
@@ -75,6 +76,7 @@ declare module mf {
         list: mf.TContextMenuList;
         expander: mf.TBaseElement;
         expanded: boolean;
+        events: any;
         protected _items: Array<mf.IContextMenuItem>;
         name: string;
         constructor(options: any);

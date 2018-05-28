@@ -101,13 +101,8 @@ var mf;
         function TContextMenuItem(options) {
             var _this = _super.call(this, options) || this;
             Objects.extend(_this, options);
-            return _this;
-        }
-        TContextMenuItem.prototype._innerInit = function (options) {
-            var _that = this;
-            this.element = Html.createElementEx('li', options['parent'], { 'class': options['cssClass'] || '' });
-            this._captionElement = Html.createElementEx('b', this.element);
-            this._captionElement.parentElement.eventListener('click', function (ev) {
+            var _that = _this;
+            _this._captionElement.parentElement.eventListener('click', function (ev) {
                 var _menuItemElement, _menuItemObj, _menuElement, _menuObj;
                 _menuItemElement = ev.target.closest(['[', mf.ATTRIBUTE_ANCESTOR, ']'].join(''));
                 if (_menuItemElement) {
@@ -129,6 +124,12 @@ var mf;
                 }
                 _that.parent.parentElement._getObj().collapse();
             });
+            return _this;
+        }
+        TContextMenuItem.prototype._innerInit = function (options) {
+            var _that = this;
+            this.element = Html.createElementEx('li', options['parent'], { 'class': options['cssClass'] || '' });
+            this._captionElement = Html.createElementEx('b', this.element);
         };
         Object.defineProperty(TContextMenuItem.prototype, "caption", {
             get: function () {
@@ -154,6 +155,13 @@ var mf;
                     this._cssClass = val.toString();
                 }
                 this.element.classList.addMany(this._cssClass);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TContextMenuItem.prototype, "ownMenu", {
+            get: function () {
+                return this.parent.parentElement._getObj();
             },
             enumerable: true,
             configurable: true
@@ -227,7 +235,15 @@ var mf;
         function TContextMenu(options) {
             var _this = _super.call(this, options) || this;
             _this.expanded = false;
+            _this.events = {};
             Objects.extend(_this, options);
+            _this.element.classList.add(mf.DEF_CONTEXTMENU_CSSCLASS);
+            _this.element.setAttribute('data-role', mf.DEF_CONTEXTMENU_ROLE);
+            if (options.hasOwnProperty('items')) {
+                var _items = mf.TContextMenuItems.create(_this);
+                _items.items = options['items'];
+                delete options['items'];
+            }
             return _this;
         }
         TContextMenu.prototype._innerInit = function (options) {
@@ -237,13 +253,6 @@ var mf;
             }
             else {
                 this.element = Html.createElementEx('div', document.body);
-            }
-            this.element.classList.add(mf.DEF_CONTEXTMENU_CSSCLASS);
-            this.element.setAttribute('data-role', mf.DEF_CONTEXTMENU_ROLE);
-            if (options.hasOwnProperty('items')) {
-                var _items = mf.TContextMenuItems.create(this);
-                _items.items = options['items'];
-                delete options['items'];
             }
         };
         TContextMenu.prototype.expand = function (ev) {

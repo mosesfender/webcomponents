@@ -22,12 +22,7 @@ module mf {
         public constructor(options) {
             super(options);
             Objects.extend(this, options);
-        }
-
-        protected _innerInit(options?: Object) {
             let _that = this;
-            this.element = Html.createElementEx('li', options['parent'], {'class': options['cssClass'] || ''}) as HTMLElement;
-            this._captionElement = Html.createElementEx('b', this.element) as HTMLElement;
             this._captionElement.parentElement.eventListener('click', function (ev: MouseEvent) {
                 let _menuItemElement, _menuItemObj, _menuElement, _menuObj;
                 _menuItemElement = (ev.target as HTMLElement).closest(['[', mf.ATTRIBUTE_ANCESTOR, ']'].join(''));
@@ -53,6 +48,12 @@ module mf {
             });
         }
 
+        protected _innerInit(options?: Object) {
+            let _that = this;
+            this.element = Html.createElementEx('li', options['parent'], {'class': options['cssClass'] || ''}) as HTMLElement;
+            this._captionElement = Html.createElementEx('b', this.element) as HTMLElement;
+        }
+
         public get caption() {
             return this._caption;
         }
@@ -74,6 +75,10 @@ module mf {
                 this._cssClass = val.toString();
             }
             this.element.classList.addMany(this._cssClass);
+        }
+
+        public get ownMenu() {
+            return this.parent.parentElement._getObj() as mf.TContextMenu;
         }
 
         /**

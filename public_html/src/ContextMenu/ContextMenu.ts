@@ -17,6 +17,7 @@ module mf {
         public list: mf.TContextMenuList;
         public expander: mf.TBaseElement;
         public expanded: boolean = false;
+        public events: any = {};
 
         /** protected defines */
         protected _items: Array<mf.IContextMenuItem>;
@@ -27,6 +28,13 @@ module mf {
         public constructor(options) {
             super(options);
             Objects.extend(this, options);
+            this.element.classList.add(mf.DEF_CONTEXTMENU_CSSCLASS);
+            this.element.setAttribute('data-role', mf.DEF_CONTEXTMENU_ROLE);
+            if (options.hasOwnProperty('items')) {
+                let _items = mf.TContextMenuItems.create(this);
+                _items.items = options['items'];
+                delete options['items'];
+            }
         }
 
         protected _innerInit(options?: Object) {
@@ -35,14 +43,6 @@ module mf {
                 delete options['element'];
             } else {
                 this.element = Html.createElementEx('div', document.body) as HTMLElement;
-            }
-            
-            this.element.classList.add(mf.DEF_CONTEXTMENU_CSSCLASS);
-            this.element.setAttribute('data-role', mf.DEF_CONTEXTMENU_ROLE);
-            if (options.hasOwnProperty('items')) {
-                let _items = mf.TContextMenuItems.create(this);
-                _items.items = options['items'];
-                delete options['items'];
             }
         }
         
