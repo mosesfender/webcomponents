@@ -41,7 +41,7 @@ declare interface DOMTokenList {
 }
 
 declare interface HTMLElement {
-    eventListener(atype: string, func: Function, capture?: Object): Array<any>,
+    eventListener(atype: string, func?: Function, capture?: Object): Array<any>,
     fire(atype: string, adata?: any): void;
 }
 

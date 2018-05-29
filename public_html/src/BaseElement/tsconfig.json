@@ -12,6 +12,9 @@
         "../../@types/common.d.ts",
         "../../dist/js/mfContextMenu.d.ts",
         "../../dist/js/mfBaseLogger.d.ts",
-        "index.ts"
+        "dataset.ts",
+        "ajaxDataset.ts",
+        "index.ts",
+        "BaseDataElement.ts"
     ]
 }

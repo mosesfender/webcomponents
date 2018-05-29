@@ -2,6 +2,7 @@ declare namespace Objects {
     function extend(first: Object, second: Object): void;
     function extendWithExcludes(first: Object, second: Object, excludes?: Array<String>): void;
     function objectToQueryStr(obj: Object): string;
+    function objectToQueryStr2(obj: Object): string;
     function compileGetUrl(url: string, params: Object): string;
 }
 declare namespace Html {
@@ -12,6 +13,7 @@ declare namespace Html {
     function classStringToCSSSelector(str: string): string;
     function tagToJqueryTag(tag: string): string;
 }
+declare function executeFunctionByName(functionName: any, context: any): any;
 declare function printf(format: string, ...args: any[]): void;
 declare function sprintf(format: string, ...args: any[]): any;
 declare function va_sprintf(args: any): any;

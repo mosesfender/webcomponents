@@ -23,6 +23,7 @@ declare module mf {
         protected _colapseLever: HTMLElement;
         protected _data: mf.IBaseNodeData;
         constructor(options: any);
+        protected onAfterDraw(obj: mf.TBaseTreeNode): void;
         protected _innerInit(): void;
         busy(val: boolean): void;
         toggle(): void;
@@ -82,7 +83,7 @@ declare module mf {
         TREE_NODE_COUNTRY_CAPTION = "countrylever",
         TREE_NODE_GEONAME_CAPTION = "geonamelever",
     }
-    class TBaseTreeView extends mf.TBaseElement implements mf.INodesExplore {
+    class TBaseTreeView extends mf.TBaseDataElement implements mf.INodesExplore {
         protected _nodes: TBaseTreeNodes;
         protected _data: Array<mf.IBaseNodeData>;
         all: Array<mf.TBaseTreeNode>;

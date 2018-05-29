@@ -25,7 +25,7 @@ module mf {
                 return node;
             }
         }
-
+        
         public removeNode(node: mf.TBaseTreeNode, _selidx?: number) {
             let _allidx = this._treeView.all.indexOf(node);
             if (!_selidx) {

@@ -29,6 +29,9 @@ var mf;
             var _this = _super.call(this, options) || this;
             _this.element.setAttribute('data-role', mf.TREE_ROLE.TREE_NODE);
             _this.caption = _this.data.caption;
+            _this.fire('onAfterDraw', _this);
+            _this.TreeView.fire('onAfterDrawNode', _this);
+            _this.onAfterDraw.call(_this, _this);
             _this.data.selected = false;
             if (_this.data.children && _this.data.children.length) {
                 _this._createNodes();
@@ -41,6 +44,7 @@ var mf;
             _this._hasChild();
             return _this;
         }
+        TBaseTreeNode.prototype.onAfterDraw = function (obj) { };
         TBaseTreeNode.prototype._innerInit = function () {
             try {
                 this._data = {};
@@ -104,6 +108,7 @@ var mf;
                 this.data.selected = true;
             }
             this._element.classList.add(mf.NODE_CLASSES.NODE_SELECTED);
+            this._treeView.fire('onSelectNode', this);
         };
         TBaseTreeNode.prototype.unselect = function () {
             if (this.data) {
@@ -580,6 +585,6 @@ var mf;
             }
         };
         return TBaseTreeView;
-    }(mf.TBaseElement));
+    }(mf.TBaseDataElement));
     mf.TBaseTreeView = TBaseTreeView;
 })(mf || (mf = {}));

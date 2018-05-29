@@ -1,3 +1,252 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var mf;
+(function (mf) {
+    var TDatasetClasses;
+    (function (TDatasetClasses) {
+        TDatasetClasses["TDataset"] = "TDataset";
+        TDatasetClasses["TAjaxDataset"] = "TAjaxDataset";
+        TDatasetClasses["TGooleMapDataset"] = "TGoogleMapDataset";
+    })(TDatasetClasses = mf.TDatasetClasses || (mf.TDatasetClasses = {}));
+    ;
+    var TFieldTypes;
+    (function (TFieldTypes) {
+        TFieldTypes[TFieldTypes["NUMBER"] = 0] = "NUMBER";
+        TFieldTypes[TFieldTypes["STRING"] = 1] = "STRING";
+    })(TFieldTypes = mf.TFieldTypes || (mf.TFieldTypes = {}));
+    ;
+    var TDataset = (function () {
+        function TDataset(owner) {
+            this._data = [];
+            this.flagBof = false;
+            this.flagEof = false;
+            this.cursor = 0;
+            this.defFields = [];
+            this.owner = owner;
+        }
+        TDataset.prototype.loadData = function (data) {
+            console.log(this);
+            this.data = data;
+            this.owner.loaded.call(this.owner);
+        };
+        TDataset.prototype.defineFields = function () {
+            this.defFields = [];
+            if (this._data.length > 0) {
+                for (var p in this._data[0]) {
+                    var ftype = TFieldTypes.STRING;
+                    if (isInteger(this.data[0][p])) {
+                        ftype = TFieldTypes.NUMBER;
+                    }
+                    this.defFields.push({
+                        fieldName: p,
+                        fieldType: ftype
+                    });
+                }
+            }
+        };
+        TDataset.prototype.issetField = function (fieldName) {
+            for (var i = 0; i < this.defFields.length; i++) {
+                if (fieldName == this.defFields[i].fieldName) {
+                    return this.defFields[i];
+                }
+            }
+            return false;
+        };
+        TDataset.prototype.first = function () {
+            return this.setIndex(0);
+        };
+        TDataset.prototype.prev = function () {
+            return this.setIndex(this.cursor - 1);
+        };
+        TDataset.prototype.next = function () {
+            return this.setIndex(this.cursor + 1);
+        };
+        TDataset.prototype.last = function () {
+            return this.setIndex(this._data.length - 1);
+        };
+        TDataset.prototype.current = function () {
+            try {
+                return this.setIndex(this.cursor);
+            }
+            catch (err) {
+                this.cursor = 0;
+                return this.setIndex(this.cursor);
+            }
+        };
+        TDataset.prototype.goTo = function (a, value) {
+            if (typeof a == 'string') {
+                return this.goTo(this.findIndex(a, value));
+            }
+            else if (typeof a == 'number') {
+                return this.setIndex(a);
+            }
+        };
+        TDataset.prototype.findIndex = function (field, value) {
+            try {
+                for (var i = 0; i < this._data.length; i++) {
+                    if (value == this._data[i][field]) {
+                        return i;
+                    }
+                }
+            }
+            catch (err) {
+                console.error(err);
+            }
+            return 0;
+        };
+        TDataset.prototype.size = function () {
+            return this._data.length;
+        };
+        TDataset.prototype.setIndex = function (idx) {
+            try {
+                this.flagBof = false;
+                this.flagEof = false;
+                if (idx < 0) {
+                    idx = 0;
+                    this.flagBof = true;
+                }
+                if (idx >= this._data.length) {
+                    idx = this._data.length - 1;
+                    this.flagEof = true;
+                }
+                this.cursor = idx;
+                return this._data[this.cursor];
+            }
+            catch (err) {
+                this.cursor = 0;
+            }
+        };
+        TDataset.prototype.fieldByName = function (fieldName) {
+            var ret = new TDataField();
+            ret.name = fieldName;
+            if (this.data[this.cursor].hasOwnProperty(fieldName)) {
+                ret.value = this.data[this.cursor][fieldName];
+            }
+            else {
+                ret.value = '';
+            }
+            return ret;
+        };
+        TDataset.prototype.column = function (fieldName) {
+            var ret = [];
+            [].map.call(this._data, function (row) {
+                if (row[fieldName]) {
+                    ret.push(row[fieldName]);
+                }
+            });
+            return ret;
+        };
+        Object.defineProperty(TDataset.prototype, "Bof", {
+            get: function () {
+                return this.flagBof;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TDataset.prototype, "Eof", {
+            get: function () {
+                return this.flagEof;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TDataset.prototype, "index", {
+            get: function () {
+                return this.cursor;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TDataset.prototype, "data", {
+            get: function () {
+                return this._data;
+            },
+            set: function (data) {
+                this._data = data;
+                this.defineFields();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TDataset.prototype, "isActive", {
+            get: function () {
+                return this.size() > 0;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TDataset.prototype, "selectValue", {
+            set: function (val) {
+                try {
+                    this._selectValue = val;
+                    this.findIndex(this._selectValue, this.owner.keyFieldName);
+                }
+                catch (err) {
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return TDataset;
+    }());
+    mf.TDataset = TDataset;
+    var TDataField = (function () {
+        function TDataField() {
+        }
+        TDataField.prototype.asString = function () {
+            return this.value.toString();
+        };
+        TDataField.prototype.asInteger = function () {
+            return parseInt(this.value);
+        };
+        return TDataField;
+    }());
+    mf.TDataField = TDataField;
+})(mf || (mf = {}));
+var mf;
+(function (mf) {
+    var RequestMethods;
+    (function (RequestMethods) {
+        RequestMethods["GET"] = "GET";
+        RequestMethods["POST"] = "POST";
+    })(RequestMethods = mf.RequestMethods || (mf.RequestMethods = {}));
+    ;
+    var TAjaxDataset = (function (_super) {
+        __extends(TAjaxDataset, _super);
+        function TAjaxDataset(owner) {
+            var _this = _super.call(this, owner) || this;
+            _this.requestParams = {};
+            _this.requestMethod = RequestMethods.GET;
+            _this.owner = owner;
+            return _this;
+        }
+        TAjaxDataset.prototype.loadData = function (params) {
+            var _that = this;
+            if (arguments.length) {
+                if (isArray(params)) {
+                    _super.prototype.loadData.call(this, params);
+                    return true;
+                }
+                else {
+                    this.requestParams = params;
+                }
+            }
+            fetch(_that.baseUrl)
+                .then(function (resp) {
+            }).catch();
+        };
+        return TAjaxDataset;
+    }(mf.TDataset));
+    mf.TAjaxDataset = TAjaxDataset;
+})(mf || (mf = {}));
 var mf;
 (function (mf) {
     mf.ATTRIBUTE_ANCESTOR = 'data-ancestor';
@@ -15,6 +264,10 @@ var mf;
                 this._element[mf.ANCESTOR_OBJ] = this;
             }
         }
+        TBaseElement.prototype.destroy = function () {
+            this._element.remove();
+            return this;
+        };
         TBaseElement.prototype._innerInit = function (options) {
         };
         ;
@@ -164,4 +417,25 @@ var mf;
             return this[mf.ANCESTOR_OBJ];
         }
     };
+})(mf || (mf = {}));
+var mf;
+(function (mf) {
+    var TBaseDataElement = (function (_super) {
+        __extends(TBaseDataElement, _super);
+        function TBaseDataElement(options) {
+            var _this = _super.call(this, options) || this;
+            _this._dataset = new mf.TDataset(_this);
+            return _this;
+        }
+        TBaseDataElement.prototype.loaded = function (aowner) { };
+        Object.defineProperty(TBaseDataElement.prototype, "dataset", {
+            get: function () {
+                return this._dataset;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return TBaseDataElement;
+    }(mf.TBaseElement));
+    mf.TBaseDataElement = TBaseDataElement;
 })(mf || (mf = {}));

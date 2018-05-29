@@ -8,6 +8,8 @@ module mf {
         protected _contentBar: HTMLElement;
         protected _closeBtn: HTMLElement;
 
+        private closeButtonClick;
+
         constructor(options?) {
             super(options);
             Objects.extend(this, options);
@@ -18,9 +20,21 @@ module mf {
             this._contentBar = Html.createElementEx('div', this._element, {'class': 'contentbar'}) as HTMLElement;
             this._caption = Html.createElementEx('span', this._titleBar, {'class': 'caption', }) as HTMLElement;
             this._closeBtn = Html.createElementEx('button', this._titleBar, {'class': 'close', 'aria-label': 'Close', 'type': 'button'}, '<span aria-hidden="true">&times;</span>') as HTMLElement;
-            this._closeBtn.eventListener('click', function (ev: Event) {
-                _that.hide.call(_that);
+            this.closeButtonClick = this._closeBtn.eventListener('click', function (ev: Event) {
+                //_that.hide.call(_that);
+                _that.close.call(_that);
             });
+        }
+
+        destroy() {
+            this._closeBtn.eventListener(this.closeButtonClick);
+            this._titleBar.removeChild(this._closeBtn);
+            this._titleBar.removeChild(this._caption);
+            this._element.removeChild(this._titleBar);
+            this._element.removeChild(this._contentBar);
+            document.body.removeChild(this._overlay);
+            document.body.removeChild(this._element);
+            return super.destroy();
         }
 
         protected _innerInit(options?) {
@@ -39,7 +53,15 @@ module mf {
             this._overlay.classList.add('hidden');
         }
 
-        public get content(){
+        public close() {
+            this.fire('beforeClose', this);
+            this.beforeClose(this);
+            return this.destroy();
+        }
+
+        public beforeClose(obj: mf.TBaseModal) {}
+
+        public get content() {
             return this._contentBar;
         }
 
@@ -58,6 +80,10 @@ module mf {
 
         public get tag() {
             return this._tag;
+        }
+
+        static createModal() {
+            return new mf.TBaseModal();
         }
 
         static letModal() {

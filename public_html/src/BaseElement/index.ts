@@ -22,6 +22,11 @@ module mf {
                 this._element[ANCESTOR_OBJ] = this;
             }
         }
+        
+        destroy(){
+            this._element.remove();
+            return this;
+        }
 
         protected _innerInit(options?) {
 

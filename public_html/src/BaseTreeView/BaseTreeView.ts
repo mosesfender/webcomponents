@@ -27,7 +27,7 @@ module mf {
      * expand(* TBaseTreeNode)
      * collapse(* TBaseTreeNode)
      */
-    export class TBaseTreeView extends mf.TBaseElement implements mf.INodesExplore {
+    export class TBaseTreeView extends mf.TBaseDataElement implements mf.INodesExplore {
         protected _nodes: TBaseTreeNodes;
         protected _data: Array<mf.IBaseNodeData>;
         public all: Array<mf.TBaseTreeNode> = [];

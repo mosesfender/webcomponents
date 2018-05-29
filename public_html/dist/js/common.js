@@ -29,6 +29,14 @@ var Objects;
         return _tmp.length ? '?' + _tmp.join('&') : '';
     }
     Objects.objectToQueryStr = objectToQueryStr;
+    function objectToQueryStr2(obj) {
+        var _tmp = [];
+        for (var p in obj) {
+            _tmp.push(p + '=' + encodeURIComponent(obj[p]));
+        }
+        return _tmp.join('&');
+    }
+    Objects.objectToQueryStr2 = objectToQueryStr2;
     function compileGetUrl(url, params) {
         return url + Objects.objectToQueryStr(params);
     }
@@ -158,6 +166,44 @@ DOMTokenList.prototype['removeMany'] = function (classes) {
         this.remove(array[i]);
     }
 };
+function executeFunctionByName(functionName, context) {
+    var args, namespaces, func;
+    if (typeof functionName === 'undefined') {
+        throw 'function name not specified';
+    }
+    if (typeof eval(functionName) !== 'function') {
+        throw functionName + ' is not a function';
+    }
+    if (typeof context !== 'undefined') {
+        if (typeof context === 'object' && context instanceof Array === false) {
+            if (typeof context[functionName] !== 'function') {
+                throw context + '.' + functionName + ' is not a function';
+            }
+            args = Array.prototype.slice.call(arguments, 2);
+        }
+        else {
+            args = Array.prototype.slice.call(arguments, 1);
+            context = window;
+        }
+    }
+    else {
+        context = window;
+    }
+    namespaces = functionName.split(".");
+    func = namespaces.pop();
+    for (var i = 0; i < namespaces.length; i++) {
+        context = context[namespaces[i]];
+    }
+    return context[func].apply(context, args);
+}
+try {
+    function freeAndNil(obj) {
+        var res = obj['destroy']();
+        res = null;
+    }
+}
+catch (err) { }
+;
 (function () {
     var lastTime = 0;
     var vendors = ['ms', 'moz', 'webkit', 'o'];

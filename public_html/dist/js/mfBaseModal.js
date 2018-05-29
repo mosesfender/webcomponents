@@ -22,11 +22,21 @@ var mf;
             _this._contentBar = Html.createElementEx('div', _this._element, { 'class': 'contentbar' });
             _this._caption = Html.createElementEx('span', _this._titleBar, { 'class': 'caption', });
             _this._closeBtn = Html.createElementEx('button', _this._titleBar, { 'class': 'close', 'aria-label': 'Close', 'type': 'button' }, '<span aria-hidden="true">&times;</span>');
-            _this._closeBtn.eventListener('click', function (ev) {
-                _that.hide.call(_that);
+            _this.closeButtonClick = _this._closeBtn.eventListener('click', function (ev) {
+                _that.close.call(_that);
             });
             return _this;
         }
+        TBaseModal.prototype.destroy = function () {
+            this._closeBtn.eventListener(this.closeButtonClick);
+            this._titleBar.removeChild(this._closeBtn);
+            this._titleBar.removeChild(this._caption);
+            this._element.removeChild(this._titleBar);
+            this._element.removeChild(this._contentBar);
+            document.body.removeChild(this._overlay);
+            document.body.removeChild(this._element);
+            return _super.prototype.destroy.call(this);
+        };
         TBaseModal.prototype._innerInit = function (options) {
             this.parent = document.body;
         };
@@ -41,6 +51,12 @@ var mf;
             this._element.classList.add('hidden');
             this._overlay.classList.add('hidden');
         };
+        TBaseModal.prototype.close = function () {
+            this.fire('beforeClose', this);
+            this.beforeClose(this);
+            return this.destroy();
+        };
+        TBaseModal.prototype.beforeClose = function (obj) { };
         Object.defineProperty(TBaseModal.prototype, "content", {
             get: function () {
                 return this._contentBar;
@@ -72,6 +88,9 @@ var mf;
             enumerable: true,
             configurable: true
         });
+        TBaseModal.createModal = function () {
+            return new mf.TBaseModal();
+        };
         TBaseModal.letModal = function () {
             var _mod = mf.TBaseModal.findModal();
             if (!_mod) {

@@ -19,18 +19,34 @@ module mf {
         NODE_LEVER_BUSY = 'icon-spinner9',
     }
 
+/**
+ * <Self triggers>
+ * 
+ * onAfterDraw
+ * 
+ * <TreeView triggers>
+ * 
+ * onAfterDrawNode
+ * 
+ * 
+ */
+
     export class TBaseTreeNode extends mf.TBaseElement {
         protected _treeView: mf.TBaseTreeView;
         protected _nodes: TBaseTreeNodes;
         protected _label: HTMLElement;
         protected _colapseLever: HTMLElement;
         protected _data: mf.IBaseNodeData;
-
+        
         constructor(options) {
             super(options);
             this.element.setAttribute('data-role', TREE_ROLE.TREE_NODE);
             this.caption = this.data.caption;
 
+            this.fire('onAfterDraw', this);
+            this.TreeView.fire('onAfterDrawNode', this);
+            this.onAfterDraw.call(this, this);
+            
             this.data.selected = false;
             if (this.data.children && this.data.children.length) {
                 this._createNodes();
@@ -43,6 +59,8 @@ module mf {
             }
             this._hasChild();
         }
+
+        protected onAfterDraw(obj: mf.TBaseTreeNode){}
 
         protected _innerInit() {
             try {
@@ -112,6 +130,7 @@ module mf {
                 this.data.selected = true;
             }
             this._element.classList.add(mf.NODE_CLASSES.NODE_SELECTED);
+            this._treeView.fire('onSelectNode', this);
         }
 
         public unselect() {
