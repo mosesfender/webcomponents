@@ -12,6 +12,7 @@ declare namespace Html {
     function createElementEx(tag: string, parent?: Element, attributes?: Object, innerText?: string): Element;
     function classStringToCSSSelector(str: string): string;
     function tagToJqueryTag(tag: string): string;
+    function cssMeasureToNumber(css: string): string;
 }
 declare function executeFunctionByName(functionName: any, context: any): any;
 declare function printf(format: string, ...args: any[]): void;

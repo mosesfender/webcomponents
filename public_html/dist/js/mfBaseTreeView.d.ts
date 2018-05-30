@@ -94,6 +94,7 @@ declare module mf {
         constructor(options: any);
         protected _createNodes(): this;
         loadTreeData(): this;
+        select(node: mf.TBaseTreeNode): void;
         protected _select(node: mf.TBaseTreeNode): this;
         protected _deselect(inode?: mf.TBaseTreeNode): this;
         expandAll(): this;

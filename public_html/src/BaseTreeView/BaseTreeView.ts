@@ -84,6 +84,10 @@ module mf {
             return this;
         }
 
+        public select(node: mf.TBaseTreeNode){
+            this._select(node);
+        }
+
         protected _select(node: mf.TBaseTreeNode) {
             if (node) {
                 this._deselect();
@@ -302,7 +306,6 @@ module mf {
                     case mf.TREE_ROLE.TREE_NODE_COUNTRY_CAPTION:
                         node = (ev.target as HTMLElement).parentElement._getObj() as mf.TBaseTreeNode;
                         this._select(node);
-                        this.fire('select', node);
                         break;
                 }
             }

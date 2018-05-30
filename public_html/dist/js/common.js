@@ -106,6 +106,10 @@ var Html;
         return '<' + tag + '></' + tag + '>';
     }
     Html.tagToJqueryTag = tagToJqueryTag;
+    function cssMeasureToNumber(css) {
+        return css.replace('/px/', '');
+    }
+    Html.cssMeasureToNumber = cssMeasureToNumber;
 })(Html || (Html = {}));
 if (!String.prototype['toBool']) {
     String.prototype['toBool'] = function () {

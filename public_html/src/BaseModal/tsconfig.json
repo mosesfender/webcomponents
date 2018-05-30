@@ -10,6 +10,7 @@
     },
     "files": [
         "../../@types/common.d.ts",
+        "../../dist/js/common.d.ts",
         "../../dist/js/mfBaseElement.d.ts",
         "index.ts"
     ]

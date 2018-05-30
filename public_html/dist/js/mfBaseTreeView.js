@@ -369,6 +369,9 @@ var mf;
             }
             return this;
         };
+        TBaseTreeView.prototype.select = function (node) {
+            this._select(node);
+        };
         TBaseTreeView.prototype._select = function (node) {
             if (node) {
                 this._deselect();
@@ -573,7 +576,6 @@ var mf;
                     case mf.TREE_ROLE.TREE_NODE_COUNTRY_CAPTION:
                         node = ev.target.parentElement._getObj();
                         this._select(node);
-                        this.fire('select', node);
                         break;
                 }
             }

@@ -44,8 +44,13 @@ module mf {
         public show() {
             this._element.classList.remove('hidden');
             this._overlay.classList.remove('hidden');
-            this._contentBar.style.width = this._contentBar.children[0].clientWidth + 'px';
-            this._contentBar.style.height = this._contentBar.children[0].clientHeight + 'px';
+            let _cs = window.getComputedStyle(this._contentBar);
+            this._contentBar.style.width =
+                this._contentBar.children[0].clientWidth + Html.cssMeasureToNumber(_cs.paddingLeft)
+                + Html.cssMeasureToNumber(_cs.paddingRight) + 'px';
+            this._contentBar.style.height =
+                this._contentBar.children[0].clientHeight + Html.cssMeasureToNumber(_cs.paddingTop)
+                + Html.cssMeasureToNumber(_cs.paddingBottom) + 'px';
         }
 
         public hide() {

@@ -107,6 +107,10 @@ namespace Html {
     export function tagToJqueryTag(tag: string): string {
         return '<' + tag + '></' + tag + '>';
     }
+    
+    export function cssMeasureToNumber(css: string){
+        return css.replace('/px/', '');
+    }
 }
 
 if (!String.prototype['toBool']) {
