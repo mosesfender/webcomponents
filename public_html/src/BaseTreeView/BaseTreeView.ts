@@ -304,6 +304,7 @@ module mf {
 
                     case mf.TREE_ROLE.TREE_NODE_CAPTION:
                     case mf.TREE_ROLE.TREE_NODE_COUNTRY_CAPTION:
+                    case mf.TREE_ROLE.TREE_NODE_GEONAME_CAPTION:
                         node = (ev.target as HTMLElement).parentElement._getObj() as mf.TBaseTreeNode;
                         this._select(node);
                         break;

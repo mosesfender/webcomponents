@@ -85,6 +85,9 @@
 .mf-tree ul li.selected > b {
   background-color: #6cbddd;
 }
+.mf-tree ul li.overmouse > b {
+  background-color: #fe9;
+}
 .mf-tree ul li.collapsed > i {
   /*filter: progid: DXImageTransform.Microsoft.BasicImage(rotation=0.5);*/
   -webkit-transform: rotate(0);

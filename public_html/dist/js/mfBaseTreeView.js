@@ -574,6 +574,7 @@ var mf;
                         break;
                     case mf.TREE_ROLE.TREE_NODE_CAPTION:
                     case mf.TREE_ROLE.TREE_NODE_COUNTRY_CAPTION:
+                    case mf.TREE_ROLE.TREE_NODE_GEONAME_CAPTION:
                         node = ev.target.parentElement._getObj();
                         this._select(node);
                         break;

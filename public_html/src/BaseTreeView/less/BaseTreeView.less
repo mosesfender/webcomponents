@@ -7,6 +7,7 @@
 
 @base-size: .9em;
 @color-back-selected: #6cbddd;
+@color-back-overmoused: #fe9;
 
 .icon-spinner9 {
     animation-name: spin;
@@ -94,6 +95,12 @@
                     background-color: @color-back-selected;
                 }
             }
+            &.overmouse {
+                & > b {
+                    background-color: @color-back-overmoused;
+                }
+            }
+            
             &.collapsed {
                 & > i {
                     /*filter: progid: DXImageTransform.Microsoft.BasicImage(rotation=0.5);*/
