@@ -27,6 +27,9 @@ var mf;
         __extends(TBaseTreeNode, _super);
         function TBaseTreeNode(options) {
             var _this = _super.call(this, options) || this;
+            if (_this.expandAfterCreate == undefined) {
+                _this.expandAfterCreate = false;
+            }
             _this.element.setAttribute('data-role', mf.TREE_ROLE.TREE_NODE);
             _this.caption = _this.data.caption;
             _this.fire('onAfterDraw', _this);
@@ -40,6 +43,10 @@ var mf;
             }
             else {
                 _this.data.children = [];
+            }
+            if (_this.expandAfterCreate) {
+                console.log(_this.data.caption, _this.expandAfterCreate);
+                _this.expand();
             }
             _this._hasChild();
             return _this;
@@ -146,10 +153,15 @@ var mf;
             if (!this._nodes) {
                 this._nodes = new mf.TBaseTreeNodes({
                     parent: this.element,
-                    TreeView: this._treeView
+                    TreeView: this._treeView,
+                    expandAfterCreate: this.expandAfterCreate
                 });
             }
             return this.nodes;
+        };
+        TBaseTreeNode.prototype.expandChilds = function () {
+            this.expandAfterCreate = true;
+            this.expand();
         };
         Object.defineProperty(TBaseTreeNode.prototype, "parentNodes", {
             get: function () {
@@ -264,11 +276,17 @@ var mf;
                 if (val.length) {
                     this._removeNodes();
                     for (var i = 0; i < val.length; i++) {
-                        var node = new mf.TBaseTreeNode({
-                            data: val[i],
-                            TreeView: this._treeView
-                        });
-                        this.addNode(node);
+                        try {
+                            var node = new mf.TBaseTreeNode({
+                                data: val[i],
+                                TreeView: this._treeView,
+                                expandAfterCreate: this.ownNode.expandAfterCreate
+                            });
+                            this.addNode(node);
+                        }
+                        catch (err) {
+                            console.error(err);
+                        }
                     }
                 }
             },
@@ -306,6 +324,13 @@ var mf;
         Object.defineProperty(TBaseTreeNodes.prototype, "tag", {
             get: function () {
                 return 'ul';
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseTreeNodes.prototype, "isTopLevel", {
+            get: function () {
+                return this._element.parentElement.getAttribute('data-role') == mf.TREE_ROLE.TREE_VIEW;
             },
             enumerable: true,
             configurable: true

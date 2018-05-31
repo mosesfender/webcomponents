@@ -19,17 +19,17 @@ module mf {
         NODE_LEVER_BUSY = 'icon-spinner9',
     }
 
-/**
- * <Self triggers>
- * 
- * onAfterDraw
- * 
- * <TreeView triggers>
- * 
- * onAfterDrawNode
- * 
- * 
- */
+    /**
+     * <Self triggers>
+     * 
+     * onAfterDraw
+     * 
+     * <TreeView triggers>
+     * 
+     * onAfterDrawNode
+     * 
+     * 
+     */
 
     export class TBaseTreeNode extends mf.TBaseElement {
         protected _treeView: mf.TBaseTreeView;
@@ -38,15 +38,22 @@ module mf {
         protected _colapseLever: HTMLElement;
         protected _data: mf.IBaseNodeData;
         
+        public expandAfterCreate: boolean;
+
         constructor(options) {
             super(options);
+            
+            if (this.expandAfterCreate == undefined){
+                this.expandAfterCreate = false;
+            }
+
             this.element.setAttribute('data-role', TREE_ROLE.TREE_NODE);
             this.caption = this.data.caption;
 
             this.fire('onAfterDraw', this);
             this.TreeView.fire('onAfterDrawNode', this);
             this.onAfterDraw.call(this, this);
-            
+
             this.data.selected = false;
             if (this.data.children && this.data.children.length) {
                 this._createNodes();
@@ -57,10 +64,14 @@ module mf {
             } else {
                 this.data.children = [];
             }
+            if (this.expandAfterCreate){
+                console.log(this.data.caption, this.expandAfterCreate);
+                this.expand();
+            }
             this._hasChild();
         }
 
-        protected onAfterDraw(obj: mf.TBaseTreeNode){}
+        protected onAfterDraw(obj: mf.TBaseTreeNode) {}
 
         protected _innerInit() {
             try {
@@ -176,10 +187,16 @@ module mf {
             if (!this._nodes) {
                 this._nodes = new mf.TBaseTreeNodes({
                     parent: this.element,
-                    TreeView: this._treeView
+                    TreeView: this._treeView,
+                    expandAfterCreate: this.expandAfterCreate
                 });
             }
             return this.nodes;
+        }
+
+        public expandChilds(){
+            this.expandAfterCreate = true;
+            this.expand();
         }
 
         public get parentNodes() {

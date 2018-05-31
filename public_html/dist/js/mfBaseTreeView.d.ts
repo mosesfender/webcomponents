@@ -22,6 +22,7 @@ declare module mf {
         protected _label: HTMLElement;
         protected _colapseLever: HTMLElement;
         protected _data: mf.IBaseNodeData;
+        expandAfterCreate: boolean;
         constructor(options: any);
         protected onAfterDraw(obj: mf.TBaseTreeNode): void;
         protected _innerInit(): void;
@@ -40,6 +41,7 @@ declare module mf {
         addNode(node: mf.TBaseTreeNode): any;
         addNode(label: string, data: mf.IBaseNodeData): any;
         protected _createNodes(): TBaseTreeNodes;
+        expandChilds(): void;
         readonly parentNodes: TBaseTreeNodes;
         data: mf.IBaseNodeData;
         readonly expanded: boolean;
@@ -63,6 +65,7 @@ declare module mf {
         readonly count: number;
         TreeView: mf.TBaseTreeView;
         readonly tag: string;
+        readonly isTopLevel: boolean;
     }
 }
 declare module mf {

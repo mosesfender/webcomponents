@@ -25,7 +25,7 @@ module mf {
                 return node;
             }
         }
-        
+
         public removeNode(node: mf.TBaseTreeNode, _selidx?: number) {
             let _allidx = this._treeView.all.indexOf(node);
             if (!_selidx) {
@@ -49,11 +49,16 @@ module mf {
             if (val.length) {
                 this._removeNodes();
                 for (let i = 0; i < val.length; i++) {
-                    let node = new mf.TBaseTreeNode({
-                        data: val[i],
-                        TreeView: this._treeView
-                    });
-                    this.addNode(node);
+                    try {
+                        let node = new mf.TBaseTreeNode({
+                            data: val[i],
+                            TreeView: this._treeView,
+                            expandAfterCreate: this.ownNode.expandAfterCreate
+                        });
+                        this.addNode(node);
+                    } catch (err) {
+                        console.error(err);
+                    }
                 }
             }
         }
@@ -79,6 +84,13 @@ module mf {
 
         public get tag() {
             return 'ul';
+        }
+
+        /**
+         * True если это верхний уровень дерева
+         */
+        public get isTopLevel() {
+            return this._element.parentElement.getAttribute('data-role') == mf.TREE_ROLE.TREE_VIEW;
         }
     }
 }
