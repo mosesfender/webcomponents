@@ -10,6 +10,105 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var mf;
 (function (mf) {
+    var TTreeViewSearcher = (function (_super) {
+        __extends(TTreeViewSearcher, _super);
+        function TTreeViewSearcher(options) {
+            var _this = _super.call(this, options) || this;
+            _this._searchedNodes = [];
+            var _that = _this;
+            _this._element.eventListener('keyup', function (ev) {
+                _that.findTitleInNodes(_that._element.value);
+            });
+            return _this;
+        }
+        TTreeViewSearcher.prototype._innerInit = function (options) {
+            this._element = Html.createElementEx('input', options['parent'], { 'type': 'text', 'data-role': 'treeview-searcher' });
+        };
+        TTreeViewSearcher.prototype._setFind = function (node) {
+            this._searchedNodes.push(node);
+            node.element.classList.remove('hidden');
+            node.element.classList.add('findres');
+            node.element.scrollIntoView();
+            this.TreeView.recursiveExpand(node);
+        };
+        TTreeViewSearcher.prototype._setUnfinded = function (node) {
+            node.element.classList.add('hidden');
+        };
+        TTreeViewSearcher.prototype._clearFindRes = function (all) {
+            [].map.call(all ? this.TreeView.all : this._searchedNodes, function (node) {
+                node.element.classList.removeMany('findres hidden');
+            });
+        };
+        TTreeViewSearcher.prototype.findTitleInNodes = function (title) {
+            function overlapWord(word, origin) {
+                return origin.toLowerCase() == word.toLowerCase();
+            }
+            function overlapWordFromLeft(word, origin) {
+                return origin.toLowerCase().substring(0, word.length) == word.toLowerCase();
+            }
+            function overlapWordFromRight(word, origin) {
+                return origin.toLowerCase().substr(0 - word.length) == word.toLowerCase();
+            }
+            function overlapSearch(word, origin) {
+                return origin.toLowerCase().match(word.toLowerCase());
+            }
+            if (title.trim() == '') {
+                this._clearFindRes(true);
+                return false;
+            }
+            this._clearFindRes();
+            var _method = 0;
+            if (title.substring(0, 1) == "*") {
+                title = title.substr(1);
+                _method = _method | 1;
+            }
+            if (title.substr(-1) == "*") {
+                title = title.substr(0, title.length - 1);
+                _method = _method | 2;
+            }
+            for (var i = 0; i < this.TreeView.all.length; i++) {
+                switch (_method) {
+                    case 0:
+                    case 2:
+                        if (overlapWordFromLeft(title, this.TreeView.all[i].data.caption)) {
+                            this._setFind(this.TreeView.all[i]);
+                        }
+                        else {
+                            this._setUnfinded(this.TreeView.all[i]);
+                        }
+                        break;
+                    case 1:
+                        if (overlapWordFromRight(title, this.TreeView.all[i].data.caption)) {
+                            this._setFind(this.TreeView.all[i]);
+                        }
+                        else {
+                            this._setUnfinded(this.TreeView.all[i]);
+                        }
+                        break;
+                    case 3:
+                        if (overlapSearch(title, this.TreeView.all[i].data.caption)) {
+                            this._setFind(this.TreeView.all[i]);
+                        }
+                        else {
+                            this._setUnfinded(this.TreeView.all[i]);
+                        }
+                        break;
+                }
+            }
+        };
+        Object.defineProperty(TTreeViewSearcher.prototype, "TreeView", {
+            get: function () {
+                return this._element.nextSibling._getObj();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return TTreeViewSearcher;
+    }(mf.TBaseElement));
+    mf.TTreeViewSearcher = TTreeViewSearcher;
+})(mf || (mf = {}));
+var mf;
+(function (mf) {
     var NODE_EXPANDED_STATE;
     (function (NODE_EXPANDED_STATE) {
         NODE_EXPANDED_STATE["NODE_EXPANDED"] = "expanded";
@@ -43,10 +142,6 @@ var mf;
             }
             else {
                 _this.data.children = [];
-            }
-            if (_this.expandAfterCreate) {
-                console.log(_this.data.caption, _this.expandAfterCreate);
-                _this.expand();
             }
             _this._hasChild();
             return _this;
@@ -165,7 +260,12 @@ var mf;
         };
         Object.defineProperty(TBaseTreeNode.prototype, "parentNodes", {
             get: function () {
-                return this.parent[mf.ANCESTOR_OBJ];
+                if (this.parent) {
+                    return this.parent[mf.ANCESTOR_OBJ];
+                }
+                else {
+                    return null;
+                }
             },
             enumerable: true,
             configurable: true
@@ -361,6 +461,16 @@ var mf;
             var _that = _this;
             _this.element.setAttribute('data-role', TREE_ROLE.TREE_VIEW);
             _this.element.classList.add('mf-tree');
+            _this._wrap = Html.createElementEx('div', _this._element.parentElement, {
+                'data-role': 'wrapper',
+            });
+            var _searcherOptions = {};
+            _searcherOptions['parent'] = _this._wrap;
+            if (options['searcher']) {
+                Objects.extend(_searcherOptions, options['searcher']);
+            }
+            _this.searcher = new mf.TTreeViewSearcher(_searcherOptions);
+            _this._wrap.appendChild(_this.parent.removeChild(_this._element));
             _this._createNodes();
             document.addEventListener('keyup', function (ev) {
                 _that._keyupHandler.call(_that, ev);
@@ -610,6 +720,19 @@ var mf;
             if (ev.target.tagName == 'B') {
                 var node = ev.target.parentElement._getObj();
                 node.toggle.call(node);
+            }
+        };
+        TBaseTreeView.prototype.recursiveExpand = function (node) {
+            var _node = node;
+            while (_node) {
+                if (!_node.parentNodes.isTopLevel) {
+                    _node = _node.parentNodes.ownNode;
+                    _node.element.classList.remove('hidden');
+                    _node.expand();
+                }
+                else {
+                    _node = null;
+                }
             }
         };
         return TBaseTreeView;

@@ -85,6 +85,9 @@
 .mf-tree ul li.selected > b {
   background-color: #6cbddd;
 }
+.mf-tree ul li.findres > b {
+  background-color: #33ff99;
+}
 .mf-tree ul li.overmouse > b {
   background-color: #fe9;
 }
@@ -114,4 +117,11 @@
 }
 .mf-tree > ul {
   display: block;
+}
+[data-role="treeview-searcher"] {
+  border: 1px solid black;
+  width: 100%;
+  background-color: #ffe;
+  padding: 2px 4px;
+  color: brown;
 }

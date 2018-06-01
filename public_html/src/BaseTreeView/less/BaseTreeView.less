@@ -8,6 +8,7 @@
 @base-size: .9em;
 @color-back-selected: #6cbddd;
 @color-back-overmoused: #fe9;
+@color-back-finded: #33ff99;
 
 .icon-spinner9 {
     animation-name: spin;
@@ -95,12 +96,17 @@
                     background-color: @color-back-selected;
                 }
             }
+            &.findres {
+                & > b {
+                    background-color: @color-back-finded;
+                }
+            }
             &.overmouse {
                 & > b {
                     background-color: @color-back-overmoused;
                 }
             }
-            
+
             &.collapsed {
                 & > i {
                     /*filter: progid: DXImageTransform.Microsoft.BasicImage(rotation=0.5);*/
@@ -134,4 +140,12 @@
     & > ul {
         display: block;
     }
+}
+
+[data-role="treeview-searcher"]{
+    border: 1px solid black;
+    width: 100%;
+    background-color: #ffe;
+    padding: 2px 4px;
+    color: brown;
 }

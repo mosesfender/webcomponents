@@ -28,6 +28,8 @@ module mf {
      * collapse(* TBaseTreeNode)
      */
     export class TBaseTreeView extends mf.TBaseDataElement implements mf.INodesExplore {
+        protected _wrap: HTMLElement;
+
         protected _nodes: TBaseTreeNodes;
         protected _data: Array<mf.IBaseNodeData>;
         public all: Array<mf.TBaseTreeNode> = [];
@@ -37,12 +39,30 @@ module mf {
         protected _contextMenuList: mf.TContextMenuList;
         protected _contextMenuMap: mf.TContextMenuMap;
 
+        public searcher: mf.TTreeViewSearcher;
+
         constructor(options) {
             super(options);
             let _that = this;
             (this.element as HTMLElement).setAttribute('data-role', TREE_ROLE.TREE_VIEW);
             (this.element as HTMLElement).classList.add('mf-tree');
+
+            this._wrap = Html.createElementEx('div', this._element.parentElement, {
+                'data-role': 'wrapper',
+            }) as HTMLElement;
+            
+
+            let _searcherOptions = {};
+            _searcherOptions['parent'] = this._wrap;
+            if (options['searcher']) {
+                Objects.extend(_searcherOptions, options['searcher']);
+            }
+            this.searcher = new mf.TTreeViewSearcher(_searcherOptions);
+            this._wrap.appendChild(this.parent.removeChild(this._element));
+            
+
             this._createNodes();
+
 
             document.addEventListener('keyup', function (ev: Event) {
                 _that._keyupHandler.call(_that, ev);
@@ -84,7 +104,7 @@ module mf {
             return this;
         }
 
-        public select(node: mf.TBaseTreeNode){
+        public select(node: mf.TBaseTreeNode) {
             this._select(node);
         }
 
@@ -316,6 +336,19 @@ module mf {
             if ((ev.target as HTMLElement).tagName == 'B') {
                 let node = (ev.target as HTMLElement).parentElement._getObj() as mf.TBaseTreeNode;
                 node.toggle.call(node);
+            }
+        }
+        
+        public recursiveExpand(node: mf.TBaseTreeNode){
+            let _node = node;
+            while(_node){
+                if (!_node.parentNodes.isTopLevel){
+                    _node = _node.parentNodes.ownNode;
+                    _node.element.classList.remove('hidden');
+                    _node.expand();
+                }else{
+                    _node = null;
+                }
             }
         }
     }

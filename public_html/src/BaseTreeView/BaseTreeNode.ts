@@ -64,10 +64,7 @@ module mf {
             } else {
                 this.data.children = [];
             }
-            if (this.expandAfterCreate){
-                console.log(this.data.caption, this.expandAfterCreate);
-                this.expand();
-            }
+
             this._hasChild();
         }
 
@@ -106,7 +103,7 @@ module mf {
             this._treeView.fire('expand', this);
         }
 
-        protected _handlerExpand() {
+        public _handlerExpand() {
             this.element.classList.remove(mf.NODE_EXPANDED_STATE.NODE_COLLAPSED);
             this.element.classList.add(mf.NODE_EXPANDED_STATE.NODE_EXPANDED);
             this._hasChild();
@@ -118,7 +115,7 @@ module mf {
             this._treeView.fire('collapse', this);
         }
 
-        protected _handlerCollapse() {
+        public _handlerCollapse() {
             this.element.classList.remove(mf.NODE_EXPANDED_STATE.NODE_EXPANDED);
             this.element.classList.add(mf.NODE_EXPANDED_STATE.NODE_COLLAPSED);
             this._hasChild();
@@ -200,7 +197,11 @@ module mf {
         }
 
         public get parentNodes() {
-            return this.parent[mf.ANCESTOR_OBJ] as mf.TBaseTreeNodes;
+            if (this.parent){
+                return this.parent[mf.ANCESTOR_OBJ] as mf.TBaseTreeNodes;
+            }else{
+                return null;
+            }
         }
 
         public set data(val: mf.IBaseNodeData) {

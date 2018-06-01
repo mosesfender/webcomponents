@@ -1,4 +1,17 @@
 declare module mf {
+    class TTreeViewSearcher extends mf.TBaseElement {
+        protected _element: HTMLInputElement;
+        protected _searchedNodes: Array<mf.TBaseTreeNode>;
+        constructor(options?: any);
+        protected _innerInit(options: any): void;
+        protected _setFind(node: mf.TBaseTreeNode): void;
+        protected _setUnfinded(node: mf.TBaseTreeNode): void;
+        protected _clearFindRes(all?: boolean): void;
+        findTitleInNodes(title: string): boolean;
+        readonly TreeView: TBaseTreeView;
+    }
+}
+declare module mf {
     interface IBaseNodeData {
         caption: string;
         expanded?: boolean;
@@ -29,9 +42,9 @@ declare module mf {
         busy(val: boolean): void;
         toggle(): void;
         expand(): void;
-        protected _handlerExpand(): void;
+        _handlerExpand(): void;
         collapse(): void;
-        protected _handlerCollapse(): void;
+        _handlerCollapse(): void;
         protected _hasChild(): boolean;
         select(): void;
         unselect(): void;
@@ -87,6 +100,7 @@ declare module mf {
         TREE_NODE_GEONAME_CAPTION = "geonamelever",
     }
     class TBaseTreeView extends mf.TBaseDataElement implements mf.INodesExplore {
+        protected _wrap: HTMLElement;
         protected _nodes: TBaseTreeNodes;
         protected _data: Array<mf.IBaseNodeData>;
         all: Array<mf.TBaseTreeNode>;
@@ -94,6 +108,7 @@ declare module mf {
         multiselect: boolean;
         protected _contextMenuList: mf.TContextMenuList;
         protected _contextMenuMap: mf.TContextMenuMap;
+        searcher: mf.TTreeViewSearcher;
         constructor(options: any);
         protected _createNodes(): this;
         loadTreeData(): this;
@@ -120,5 +135,6 @@ declare module mf {
         protected _contextMenuHandler(ev: Event): void;
         protected _clickHandler(ev: Event): void;
         protected _dblclickHandler(ev: Event): void;
+        recursiveExpand(node: mf.TBaseTreeNode): void;
     }
 }

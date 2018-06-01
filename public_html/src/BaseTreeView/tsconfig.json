@@ -13,6 +13,7 @@
         "../../dist/js/common.d.ts",
         "../../dist/js/mfBaseElement.d.ts",
         "../../dist/js/mfContextMenu.d.ts",
+        "Searcher.ts",
         "BaseTreeNode.ts",
         "BaseTreeNodes.ts",
         "BaseTreeView.ts"
