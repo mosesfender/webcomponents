@@ -1,9 +1,18 @@
 module mf {
 
+    export interface ISearchIndexItem {
+        str: string | Array<string>;
+        node: mf.TBaseTreeNode;
+    }
+
+    export type TSearchIndex = Array<mf.ISearchIndexItem>;
+
     export class TTreeViewSearcher extends mf.TBaseElement {
+        public owner: mf.TBaseTreeView;
         protected _element: HTMLInputElement;
 
-        protected _searchedNodes: Array<mf.TBaseTreeNode> = [];
+        protected _index: mf.TSearchIndex = [];
+        protected _searchedNodes: mf.TSearchIndex = [];
 
         constructor(options?) {
             super(options);
@@ -17,38 +26,37 @@ module mf {
             this._element = Html.createElementEx('input', options['parent'], {'type': 'text', 'data-role': 'treeview-searcher'}) as HTMLInputElement;
         }
 
-        protected _setFind(node: mf.TBaseTreeNode) {
-            this._searchedNodes.push(node);
-            node.element.classList.remove('hidden');
-            node.element.classList.add('findres');
-            node.element.scrollIntoView();
-            this.TreeView.recursiveExpand(node);
+        public addIndex(item: mf.ISearchIndexItem) {
+            try {
+                this.owner.all.push(item);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                //console.log(item.str);
+            }
         }
 
-        protected _setUnfinded(node: mf.TBaseTreeNode) {
-            node.element.classList.add('hidden');
+        protected _setFind(_item: mf.ISearchIndexItem) {
+            console.log(_item);
+            _item.node.element.classList.remove('hidden');
+            _item.node.element.classList.add('findres');
+            _item.node.element.scrollIntoView();
+            this.owner.recursiveExpand(_item.node);
+        }
+
+        protected _setUnfinded(_item: mf.ISearchIndexItem) {
+            _item.node.element.classList.add('hidden');
         }
 
         protected _clearFindRes(all?: boolean) {
-            [].map.call(all ? this.TreeView.all : this._searchedNodes, function (node: mf.TBaseTreeNode) {
-                node.element.classList.removeMany('findres hidden');
+            [].map.call(all ? this.owner.all : this._searchedNodes, function (_item: mf.ISearchIndexItem) {
+                _item.node.element.classList.removeMany('findres hidden');
             });
         }
 
         public findTitleInNodes(title: string) {
 
-            function overlapWord(word: string, origin: string) {
-                return origin.toLowerCase() == word.toLowerCase();
-            }
-            function overlapWordFromLeft(word: string, origin: string) {
-                return origin.toLowerCase().substring(0, word.length) == word.toLowerCase();
-            }
-            function overlapWordFromRight(word: string, origin: string) {
-                return origin.toLowerCase().substr(0 - word.length) == word.toLowerCase();
-            }
-            function overlapSearch(word: string, origin: string) {
-                return origin.toLowerCase().match(word.toLowerCase());
-            }
+            title = title.toLowerCase();
 
             if (title.trim() == '') {
                 this._clearFindRes(true);
@@ -66,7 +74,7 @@ module mf {
                 _method = _method | 2;
             }
 
-            for (let i = 0; i < this.TreeView.all.length; i++) {
+            for (let i = 0; i < this.owner.all.length; i++) {
                 switch (_method) {
                     //                    case 0:                         /* точное совпадение */
                     //                        if (overlapWord(title, this.TreeView.all[i].data.caption)) {
@@ -75,28 +83,74 @@ module mf {
                     //                        break;
                     case 0:                         /* точное совпадение */
                     case 2:                         /* совпадение слева */
-                        if (overlapWordFromLeft(title, this.TreeView.all[i].data.caption)) {
-                            this._setFind(this.TreeView.all[i]);
+                        if (this.overlapWordFromLeft(title, this.owner.all[i].str)) {
+                            this._setFind(this.owner.all[i]);
                         } else {
-                            this._setUnfinded(this.TreeView.all[i]);
+                            this._setUnfinded(this.owner.all[i]);
                         }
                         break;
                     case 1:                         /* совпадение справа */
-                        if (overlapWordFromRight(title, this.TreeView.all[i].data.caption)) {
-                            this._setFind(this.TreeView.all[i]);
+                        if (this.overlapWordFromRight(title, this.owner.all[i].str)) {
+                            this._setFind(this.owner.all[i]);
                         } else {
-                            this._setUnfinded(this.TreeView.all[i]);
+                            this._setUnfinded(this.owner.all[i]);
                         }
                         break;
                     case 3:                         /* совпадение в поиске строки */
-                        if (overlapSearch(title, this.TreeView.all[i].data.caption)) {
-                            this._setFind(this.TreeView.all[i]);
+                        if (this.overlapSearch(title, this.owner.all[i].str)) {
+                            this._setFind(this.owner.all[i]);
                         } else {
-                            this._setUnfinded(this.TreeView.all[i]);
+                            this._setUnfinded(this.owner.all[i]);
                         }
                         break;
                 }
             }
+        }
+
+        protected overlapWord(word: string, origin: string | Array<string>) {
+            if (typeof origin == 'string') {
+                origin = [origin];
+            }
+            for (let i = 0; i < origin.length; i++) {
+                if (origin[i] == word) {
+                    return true;
+                }
+            }
+            return false
+        }
+        protected overlapWordFromLeft(word: string, origin: string | Array<string>) {
+            if (typeof origin == 'string') {
+                origin = [origin];
+            }
+            for (let i = 0; i < origin.length; i++) {
+                if (origin[i].substring(0, word.length) == word) {
+                    return true;
+                }
+            }
+            return false
+        }
+        protected overlapWordFromRight(word: string, origin: string | Array<string>) {
+            if (typeof origin == 'string') {
+                origin = [origin];
+            }
+            for (let i = 0; i < origin.length; i++) {
+                if (origin[i].substr(0 - word.length) == word) {
+                    return true;
+                }
+            }
+            return false
+        }
+
+        protected overlapSearch(word: string, origin: string | Array<string>) {
+            if (typeof origin == 'string') {
+                origin = [origin];
+            }
+            for (let i = 0; i < origin.length; i++) {
+                if (origin[i].match(word)) {
+                    return true;
+                }
+            }
+            return false
         }
 
         public get TreeView() {

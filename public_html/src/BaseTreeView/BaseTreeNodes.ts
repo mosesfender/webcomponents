@@ -8,33 +8,45 @@ module mf {
         }
 
         public addNode(node: mf.TBaseTreeNode);
+        public addNode(node: mf.ISearchIndexItem);
         public addNode(label: string, data: mf.IBaseNodeData);
         public addNode() {
             let args = arguments;
+            if ((args[0] as Object).hasOwnProperty('str')) {
+                (args[0] as mf.ISearchIndexItem).node.TreeView = this._treeView;
+                this.element.appendChild((args[0] as mf.ISearchIndexItem).node.element);
+                this.TreeView.searcher.addIndex(args[0]);
+             }
             if (args[0] instanceof mf.TBaseTreeNode) {
                 (args[0] as mf.TBaseTreeNode).TreeView = this._treeView;
                 this.element.appendChild((args[0] as mf.TBaseTreeNode).element);
-                this._treeView.all.push(args[0]);
+                this.TreeView.searcher.addIndex({node: args[0], str: (args[0] as mf.TBaseTreeNode).caption});
                 return args[0];
             }
             if (typeof (args[0]) === 'string') {
                 let node = new mf.TBaseTreeNode(args[1]);
                 node.TreeView = this._treeView;
                 this.element.appendChild(node.element);
-                this._treeView.all.push(node);
+                this.TreeView.searcher.addIndex({node: node, str: node.caption});
                 return node;
             }
         }
 
         public removeNode(node: mf.TBaseTreeNode, _selidx?: number) {
-            let _allidx = this._treeView.all.indexOf(node);
-            if (!_selidx) {
-                try {
-                    _selidx = this._treeView.selected.indexOf(node);
-                } catch (err) {
-                    console.error(err);
-                }
-            }
+//            let _allidx = function(_n: mf.TBaseTreeNode){
+//                for (let i=0; i< _n.TreeView.all.length; i++){
+//                    if(_n.TreeView.all[i].node == _n){
+//                        return i;
+//                    }
+//                }
+//            };
+//            if (!_selidx) {
+//                try {
+//                    _selidx = this._treeView.selected.indexOf(node);
+//                } catch (err) {
+//                    console.error(err);
+//                }
+//            }
             this.element.removeChild(node.element);
             node = null;
         }
@@ -57,7 +69,7 @@ module mf {
                         });
                         this.addNode(node);
                     } catch (err) {
-                        console.error(err);
+                        //console.error(err);
                     }
                 }
             }
@@ -80,6 +92,10 @@ module mf {
 
         public set TreeView(val: mf.TBaseTreeView) {
             this._treeView = val;
+        }
+        
+        public get TreeView(){
+            return this._treeView;
         }
 
         public get tag() {

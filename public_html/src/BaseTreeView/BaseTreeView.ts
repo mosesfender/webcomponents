@@ -32,7 +32,7 @@ module mf {
 
         protected _nodes: TBaseTreeNodes;
         protected _data: Array<mf.IBaseNodeData>;
-        public all: Array<mf.TBaseTreeNode> = [];
+        public all: mf.TSearchIndex = [];
         protected _selected: Array<mf.TBaseTreeNode> = [];
         public multiselect: boolean = false;
 
@@ -50,16 +50,17 @@ module mf {
             this._wrap = Html.createElementEx('div', this._element.parentElement, {
                 'data-role': 'wrapper',
             }) as HTMLElement;
-            
+
 
             let _searcherOptions = {};
             _searcherOptions['parent'] = this._wrap;
+            _searcherOptions['owner'] = this;
             if (options['searcher']) {
                 Objects.extend(_searcherOptions, options['searcher']);
             }
             this.searcher = new mf.TTreeViewSearcher(_searcherOptions);
             this._wrap.appendChild(this.parent.removeChild(this._element));
-            
+
 
             this._createNodes();
 
@@ -86,7 +87,25 @@ module mf {
                 //_that.loadTreeData.call(_that);
             });
 
+            this.on('onAfterCreateNode', function (ev: CustomEvent) {
+                _that._onAfterCreateNodeHandler.call(_that, ev.detail);
+            });
+
+            this.on('onAfterLoadChilds', function (ev: CustomEvent) {
+                _that._onAfterCreateNodeHandler.call(_that);
+            });
+
             this.fire('created');
+        }
+
+        protected _onAfterCreateNodeHandler(_node: mf.TBaseTreeNode) {
+            //            if (this.searcher) {
+            //                this.searcher.addIndex({str: _node.caption, node: _node});
+            //            }
+        }
+
+        protected _onAfterLoadChildsHandler(_node: mf.TBaseTreeNode) {
+
         }
 
         protected _createNodes() {
@@ -131,8 +150,8 @@ module mf {
 
         public expandAll() {
             for (let i = 0; i < this.all.length; i++) {
-                if (this.all[i].nodes) {
-                    this.all[i].expand();
+                if (this.all[i].node.nodes) {
+                    this.all[i].node.expand();
                 }
             }
             return this;
@@ -140,11 +159,22 @@ module mf {
 
         public collapseAll() {
             for (let i = 0; i < this.all.length; i++) {
-                if (this.all[i].nodes) {
-                    this.all[i].collapse();
+                if (this.all[i].node.nodes) {
+                    this.all[i].node.collapse();
                 }
             }
             return this;
+        }
+
+        public recheckAll() {
+            this.all = [];
+            let _els = this._element.querySelectorAll('li');
+            for (let i = 0; i < _els.length; i++) {
+                this.all.push({
+                    str: (_els[i]._getObj() as mf.TBaseTreeNode).data.caption,
+                    node: _els[i]._getObj() as mf.TBaseTreeNode
+                });
+            }
         }
 
         public get selected() {
@@ -338,15 +368,21 @@ module mf {
                 node.toggle.call(node);
             }
         }
-        
-        public recursiveExpand(node: mf.TBaseTreeNode){
+
+        public recursiveExpand(node: mf.TBaseTreeNode) {
             let _node = node;
-            while(_node){
-                if (!_node.parentNodes.isTopLevel){
-                    _node = _node.parentNodes.ownNode;
-                    _node.element.classList.remove('hidden');
-                    _node.expand();
-                }else{
+            while (_node) {
+                if (_node.parentNodes) {
+                    //console.log(_node.caption, _node.parentNodes.isTopLevel);
+                    if (!_node.parentNodes.isTopLevel) {
+                        _node.element.classList.remove('hidden');
+                        //_node.expand();
+                        _node._handlerExpand();
+                        _node = _node.parentNodes.ownNode;
+                    } else {
+                        _node = null;
+                    }
+                } else {
                     _node = null;
                 }
             }

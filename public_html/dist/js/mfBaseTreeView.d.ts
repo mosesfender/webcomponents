@@ -1,13 +1,25 @@
 declare module mf {
+    interface ISearchIndexItem {
+        str: string | Array<string>;
+        node: mf.TBaseTreeNode;
+    }
+    type TSearchIndex = Array<mf.ISearchIndexItem>;
     class TTreeViewSearcher extends mf.TBaseElement {
+        owner: mf.TBaseTreeView;
         protected _element: HTMLInputElement;
-        protected _searchedNodes: Array<mf.TBaseTreeNode>;
+        protected _index: mf.TSearchIndex;
+        protected _searchedNodes: mf.TSearchIndex;
         constructor(options?: any);
         protected _innerInit(options: any): void;
-        protected _setFind(node: mf.TBaseTreeNode): void;
-        protected _setUnfinded(node: mf.TBaseTreeNode): void;
+        addIndex(item: mf.ISearchIndexItem): void;
+        protected _setFind(_item: mf.ISearchIndexItem): void;
+        protected _setUnfinded(_item: mf.ISearchIndexItem): void;
         protected _clearFindRes(all?: boolean): void;
         findTitleInNodes(title: string): boolean;
+        protected overlapWord(word: string, origin: string | Array<string>): boolean;
+        protected overlapWordFromLeft(word: string, origin: string | Array<string>): boolean;
+        protected overlapWordFromRight(word: string, origin: string | Array<string>): boolean;
+        protected overlapSearch(word: string, origin: string | Array<string>): boolean;
         readonly TreeView: TBaseTreeView;
     }
 }
@@ -37,6 +49,7 @@ declare module mf {
         protected _data: mf.IBaseNodeData;
         expandAfterCreate: boolean;
         constructor(options: any);
+        destroy(): this;
         protected onAfterDraw(obj: mf.TBaseTreeNode): void;
         protected _innerInit(): void;
         busy(val: boolean): void;
@@ -54,6 +67,7 @@ declare module mf {
         addNode(node: mf.TBaseTreeNode): any;
         addNode(label: string, data: mf.IBaseNodeData): any;
         protected _createNodes(): TBaseTreeNodes;
+        loadChildren(): void;
         expandChilds(): void;
         readonly parentNodes: TBaseTreeNodes;
         data: mf.IBaseNodeData;
@@ -69,6 +83,7 @@ declare module mf {
         protected _treeView: mf.TBaseTreeView;
         constructor(options: any);
         addNode(node: mf.TBaseTreeNode): any;
+        addNode(node: mf.ISearchIndexItem): any;
         addNode(label: string, data: mf.IBaseNodeData): any;
         removeNode(node: mf.TBaseTreeNode, _selidx?: number): void;
         protected _removeNodes(): void;
@@ -103,13 +118,15 @@ declare module mf {
         protected _wrap: HTMLElement;
         protected _nodes: TBaseTreeNodes;
         protected _data: Array<mf.IBaseNodeData>;
-        all: Array<mf.TBaseTreeNode>;
+        all: mf.TSearchIndex;
         protected _selected: Array<mf.TBaseTreeNode>;
         multiselect: boolean;
         protected _contextMenuList: mf.TContextMenuList;
         protected _contextMenuMap: mf.TContextMenuMap;
         searcher: mf.TTreeViewSearcher;
         constructor(options: any);
+        protected _onAfterCreateNodeHandler(_node: mf.TBaseTreeNode): void;
+        protected _onAfterLoadChildsHandler(_node: mf.TBaseTreeNode): void;
         protected _createNodes(): this;
         loadTreeData(): this;
         select(node: mf.TBaseTreeNode): void;
@@ -117,6 +134,7 @@ declare module mf {
         protected _deselect(inode?: mf.TBaseTreeNode): this;
         expandAll(): this;
         collapseAll(): this;
+        recheckAll(): void;
         readonly selected: TBaseTreeNode[];
         readonly nodes: TBaseTreeNodes;
         data: Array<mf.IBaseNodeData>;

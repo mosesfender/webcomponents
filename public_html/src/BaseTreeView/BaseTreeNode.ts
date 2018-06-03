@@ -27,7 +27,8 @@ module mf {
      * <TreeView triggers>
      * 
      * onAfterDrawNode
-     * 
+     * onAfterCreateNode
+     * onAfterLoadChilds
      * 
      */
 
@@ -66,8 +67,13 @@ module mf {
             }
 
             this._hasChild();
+            this._treeView.fire('onAfterCreateNode', this);
         }
-
+        
+        destroy(){
+            return super.destroy();
+        }
+        
         protected onAfterDraw(obj: mf.TBaseTreeNode) {}
 
         protected _innerInit() {
@@ -189,6 +195,10 @@ module mf {
                 });
             }
             return this.nodes;
+        }
+        
+        public loadChildren(){
+            this._treeView.fire('onAfterLoadChilds');
         }
 
         public expandChilds(){
