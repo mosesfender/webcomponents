@@ -372,18 +372,20 @@ module mf {
         public recursiveExpand(node: mf.TBaseTreeNode) {
             let _node = node;
             while (_node) {
-                if (_node.parentNodes) {
-                    //console.log(_node.caption, _node.parentNodes.isTopLevel);
-                    if (!_node.parentNodes.isTopLevel) {
-                        _node.element.classList.remove('hidden');
-                        //_node.expand();
+                try {
+                    if (_node.parentNodes) {
+                        if (!_node.parentNodes.isTopLevel) {
+                            _node = _node.parentNodes.ownNode;
+                        } else {
+                            _node = null;
+                        }
                         _node._handlerExpand();
-                        _node = _node.parentNodes.ownNode;
+                        _node.element.classList.remove('hidden');
                     } else {
                         _node = null;
                     }
-                } else {
-                    _node = null;
+                } catch (err) {
+                    //console.error(err);
                 }
             }
         }

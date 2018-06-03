@@ -36,11 +36,9 @@ var mf;
             }
         };
         TTreeViewSearcher.prototype._setFind = function (_item) {
-            console.log(_item);
             _item.node.element.classList.remove('hidden');
             _item.node.element.classList.add('findres');
-            _item.node.element.scrollIntoView();
-            this.owner.recursiveExpand(_item.node);
+            this._searchedNodes.push(_item);
         };
         TTreeViewSearcher.prototype._setUnfinded = function (_item) {
             _item.node.element.classList.add('hidden');
@@ -51,12 +49,14 @@ var mf;
             });
         };
         TTreeViewSearcher.prototype.findTitleInNodes = function (title) {
+            var _that = this;
+            this._searchedNodes = [];
             title = title.toLowerCase();
             if (title.trim() == '') {
                 this._clearFindRes(true);
                 return false;
             }
-            this._clearFindRes();
+            this._clearFindRes(true);
             var _method = 0;
             if (title.substring(0, 1) == "*") {
                 title = title.substr(1);
@@ -95,6 +95,10 @@ var mf;
                         break;
                 }
             }
+            [].map.call(this._searchedNodes, function (_item) {
+                _item.node.element.scrollIntoView();
+                _that.owner.recursiveExpand.call(_that, _item.node);
+            });
         };
         TTreeViewSearcher.prototype.overlapWord = function (word, origin) {
             if (typeof origin == 'string') {
@@ -795,18 +799,22 @@ var mf;
         TBaseTreeView.prototype.recursiveExpand = function (node) {
             var _node = node;
             while (_node) {
-                if (_node.parentNodes) {
-                    if (!_node.parentNodes.isTopLevel) {
-                        _node.element.classList.remove('hidden');
+                try {
+                    if (_node.parentNodes) {
+                        if (!_node.parentNodes.isTopLevel) {
+                            _node = _node.parentNodes.ownNode;
+                        }
+                        else {
+                            _node = null;
+                        }
                         _node._handlerExpand();
-                        _node = _node.parentNodes.ownNode;
+                        _node.element.classList.remove('hidden');
                     }
                     else {
                         _node = null;
                     }
                 }
-                else {
-                    _node = null;
+                catch (err) {
                 }
             }
         };

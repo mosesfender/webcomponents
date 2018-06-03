@@ -37,11 +37,9 @@ module mf {
         }
 
         protected _setFind(_item: mf.ISearchIndexItem) {
-            console.log(_item);
             _item.node.element.classList.remove('hidden');
             _item.node.element.classList.add('findres');
-            _item.node.element.scrollIntoView();
-            this.owner.recursiveExpand(_item.node);
+            this._searchedNodes.push(_item);
         }
 
         protected _setUnfinded(_item: mf.ISearchIndexItem) {
@@ -55,7 +53,8 @@ module mf {
         }
 
         public findTitleInNodes(title: string) {
-
+            let _that = this;
+            this._searchedNodes = [];
             title = title.toLowerCase();
 
             if (title.trim() == '') {
@@ -63,7 +62,7 @@ module mf {
                 return false;
             }
 
-            this._clearFindRes();
+            this._clearFindRes(true);
             let _method = 0;
             if (title.substring(0, 1) == "*") {
                 title = title.substr(1);
@@ -105,6 +104,10 @@ module mf {
                         break;
                 }
             }
+            [].map.call(this._searchedNodes, function (_item: mf.ISearchIndexItem) {
+                _item.node.element.scrollIntoView();
+                _that.owner.recursiveExpand.call(_that, _item.node);
+            });
         }
 
         protected overlapWord(word: string, origin: string | Array<string>) {
