@@ -15,12 +15,20 @@ declare module mf {
         protected _setFind(_item: mf.ISearchIndexItem): void;
         protected _setUnfinded(_item: mf.ISearchIndexItem): void;
         protected _clearFindRes(all?: boolean): void;
-        findTitleInNodes(title: string): boolean;
+        findTitleInNodes(ttl: string | Array<string>): boolean;
         protected overlapWord(word: string, origin: string | Array<string>): boolean;
         protected overlapWordFromLeft(word: string, origin: string | Array<string>): boolean;
         protected overlapWordFromRight(word: string, origin: string | Array<string>): boolean;
         protected overlapSearch(word: string, origin: string | Array<string>): boolean;
         readonly TreeView: TBaseTreeView;
+    }
+}
+declare module mf {
+    class TStatusBar extends mf.TBaseElement {
+        constructor(options?: any);
+        protected _innerInit(options?: any): void;
+        clear(): void;
+        text: string;
     }
 }
 declare module mf {
@@ -124,14 +132,15 @@ declare module mf {
         protected _contextMenuList: mf.TContextMenuList;
         protected _contextMenuMap: mf.TContextMenuMap;
         searcher: mf.TTreeViewSearcher;
+        status: mf.TStatusBar;
         constructor(options: any);
         protected _onAfterCreateNodeHandler(_node: mf.TBaseTreeNode): void;
         protected _onAfterLoadChildsHandler(_node: mf.TBaseTreeNode): void;
         protected _createNodes(): this;
         loadTreeData(): this;
         select(node: mf.TBaseTreeNode): void;
-        protected _select(node: mf.TBaseTreeNode): this;
-        protected _deselect(inode?: mf.TBaseTreeNode): this;
+        protected _select(node: mf.TBaseTreeNode, ctrl?: boolean): this;
+        protected _deselect(inode?: mf.TBaseTreeNode, ctrl?: boolean): any;
         expandAll(): this;
         collapseAll(): this;
         recheckAll(): void;
@@ -151,8 +160,10 @@ declare module mf {
         private _findNodeByIndex(idx);
         protected _keyupHandler(ev: KeyboardEvent): void;
         protected _contextMenuHandler(ev: Event): void;
-        protected _clickHandler(ev: Event): void;
+        protected _clickHandler(ev: MouseEvent): void;
         protected _dblclickHandler(ev: Event): void;
         recursiveExpand(node: mf.TBaseTreeNode): void;
+        recursiveParents(node: mf.TBaseTreeNode): any[];
+        statusPath(node: mf.TBaseTreeNode): void;
     }
 }

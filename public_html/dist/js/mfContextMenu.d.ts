@@ -28,6 +28,10 @@ declare module mf {
     }
 }
 declare module mf {
+    enum CONTEXTMENU_ITEM_TYPE {
+        BUTTON = 1,
+        SEPARATOR = 2,
+    }
     interface IContextMenuItem {
         caption: string;
         call: string;
@@ -35,8 +39,10 @@ declare module mf {
         cssClass: string | Array<string>;
         name: string;
         items: Array<mf.IContextMenuItem> | Array<mf.TContextMenuItem>;
+        nodeType: mf.CONTEXTMENU_ITEM_TYPE;
     }
     const DEF_CONTEXTMENUITEM_CSSCLASS = "mf-context_menu_item";
+    const DEF_CONTEXTMENUSEPARATOR_CSSCLASS = "mf-context_menu_separator";
     class TContextMenuItem extends mf.TBaseElement implements mf.IContextMenuItem {
         protected _caption: string;
         protected _captionElement: HTMLElement;
@@ -44,6 +50,7 @@ declare module mf {
         callType: mf.ContextMenuCall;
         name: string;
         children: Array<mf.IContextMenuItem> | Array<mf.TContextMenuItem>;
+        nodeType: mf.CONTEXTMENU_ITEM_TYPE;
         constructor(options: any);
         protected _innerInit(options?: Object): void;
         caption: string;

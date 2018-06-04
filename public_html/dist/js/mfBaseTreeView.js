@@ -48,51 +48,56 @@ var mf;
                 _item.node.element.classList.removeMany('findres hidden');
             });
         };
-        TTreeViewSearcher.prototype.findTitleInNodes = function (title) {
+        TTreeViewSearcher.prototype.findTitleInNodes = function (ttl) {
             var _that = this;
             this._searchedNodes = [];
-            title = title.toLowerCase();
-            if (title.trim() == '') {
+            if (typeof ttl == 'string') {
+                ttl = [ttl];
+            }
+            for (var t = 0; t < ttl.length; t++) {
+                var title = ttl[t].toLowerCase();
+                if (title.trim() == '') {
+                    this._clearFindRes(true);
+                    return false;
+                }
                 this._clearFindRes(true);
-                return false;
-            }
-            this._clearFindRes(true);
-            var _method = 0;
-            if (title.substring(0, 1) == "*") {
-                title = title.substr(1);
-                _method = _method | 1;
-            }
-            if (title.substr(-1) == "*") {
-                title = title.substr(0, title.length - 1);
-                _method = _method | 2;
-            }
-            for (var i = 0; i < this.owner.all.length; i++) {
-                switch (_method) {
-                    case 0:
-                    case 2:
-                        if (this.overlapWordFromLeft(title, this.owner.all[i].str)) {
-                            this._setFind(this.owner.all[i]);
-                        }
-                        else {
-                            this._setUnfinded(this.owner.all[i]);
-                        }
-                        break;
-                    case 1:
-                        if (this.overlapWordFromRight(title, this.owner.all[i].str)) {
-                            this._setFind(this.owner.all[i]);
-                        }
-                        else {
-                            this._setUnfinded(this.owner.all[i]);
-                        }
-                        break;
-                    case 3:
-                        if (this.overlapSearch(title, this.owner.all[i].str)) {
-                            this._setFind(this.owner.all[i]);
-                        }
-                        else {
-                            this._setUnfinded(this.owner.all[i]);
-                        }
-                        break;
+                var _method = 0;
+                if (title.substring(0, 1) == "*") {
+                    title = title.substr(1);
+                    _method = _method | 1;
+                }
+                if (title.substr(-1) == "*") {
+                    title = title.substr(0, title.length - 1);
+                    _method = _method | 2;
+                }
+                for (var i = 0; i < this.owner.all.length; i++) {
+                    switch (_method) {
+                        case 0:
+                        case 2:
+                            if (this.overlapWordFromLeft(title, this.owner.all[i].str)) {
+                                this._setFind(this.owner.all[i]);
+                            }
+                            else {
+                                this._setUnfinded(this.owner.all[i]);
+                            }
+                            break;
+                        case 1:
+                            if (this.overlapWordFromRight(title, this.owner.all[i].str)) {
+                                this._setFind(this.owner.all[i]);
+                            }
+                            else {
+                                this._setUnfinded(this.owner.all[i]);
+                            }
+                            break;
+                        case 3:
+                            if (this.overlapSearch(title, this.owner.all[i].str)) {
+                                this._setFind(this.owner.all[i]);
+                            }
+                            else {
+                                this._setUnfinded(this.owner.all[i]);
+                            }
+                            break;
+                    }
                 }
             }
             [].map.call(this._searchedNodes, function (_item) {
@@ -154,6 +159,30 @@ var mf;
         return TTreeViewSearcher;
     }(mf.TBaseElement));
     mf.TTreeViewSearcher = TTreeViewSearcher;
+})(mf || (mf = {}));
+var mf;
+(function (mf) {
+    var TStatusBar = (function (_super) {
+        __extends(TStatusBar, _super);
+        function TStatusBar(options) {
+            return _super.call(this, options) || this;
+        }
+        TStatusBar.prototype._innerInit = function (options) {
+            this._element = Html.createElementEx('div', options['parent'], { 'data-role': 'treeview-statusbar' });
+        };
+        TStatusBar.prototype.clear = function () {
+            this.text = '';
+        };
+        Object.defineProperty(TStatusBar.prototype, "text", {
+            set: function (val) {
+                this._element.innerHTML = val;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return TStatusBar;
+    }(mf.TBaseElement));
+    mf.TStatusBar = TStatusBar;
 })(mf || (mf = {}));
 var mf;
 (function (mf) {
@@ -510,7 +539,6 @@ var mf;
             var _this = _super.call(this, options) || this;
             _this.all = [];
             _this._selected = [];
-            _this.multiselect = false;
             var _that = _this;
             _this.element.setAttribute('data-role', TREE_ROLE.TREE_VIEW);
             _this.element.classList.add('mf-tree');
@@ -526,8 +554,14 @@ var mf;
             _this.searcher = new mf.TTreeViewSearcher(_searcherOptions);
             _this._wrap.appendChild(_this.parent.removeChild(_this._element));
             _this._createNodes();
+            var _statusOptions = {};
+            _statusOptions['parent'] = _this._wrap;
+            _statusOptions['owner'] = _this;
+            if (options['status']) {
+                Objects.extend(_statusOptions, options['status']);
+            }
+            _this.status = new mf.TStatusBar(_statusOptions);
             document.addEventListener('keyup', function (ev) {
-                _that._keyupHandler.call(_that, ev);
             });
             _this.on('contextmenu', function (ev) {
                 ev.preventDefault();
@@ -547,6 +581,9 @@ var mf;
             });
             _this.on('onAfterLoadChilds', function (ev) {
                 _that._onAfterCreateNodeHandler.call(_that);
+            });
+            _this.on('onSelectNode', function (ev) {
+                _that.statusPath(ev.detail);
             });
             _this.fire('created');
             return _this;
@@ -571,11 +608,13 @@ var mf;
         TBaseTreeView.prototype.select = function (node) {
             this._select(node);
         };
-        TBaseTreeView.prototype._select = function (node) {
+        TBaseTreeView.prototype._select = function (node, ctrl) {
             if (node) {
-                this._deselect();
+                if (!(this.multiselect && ctrl)) {
+                    this._deselect();
+                }
                 if (node.data.selected) {
-                    node.unselect();
+                    this._deselect(node, ctrl);
                 }
                 else {
                     node.select();
@@ -584,11 +623,23 @@ var mf;
             }
             return this;
         };
-        TBaseTreeView.prototype._deselect = function (inode) {
-            [].map.call(this._selected, function (node, idx, sel) {
-                var _removed = sel.splice(idx, 1)[0];
-                _removed.unselect();
-            });
+        TBaseTreeView.prototype._deselect = function (inode, ctrl) {
+            var _removed;
+            var _that = this;
+            var idx = 0;
+            while (_that._selected.length) {
+                if (_that.multiselect && ctrl) {
+                    if (inode && inode == _that._selected[idx]) {
+                        _removed = _that._selected.splice(idx, 1)[0];
+                        return _removed.unselect();
+                    }
+                }
+                else {
+                    _removed = _that._selected.splice(0, 1)[0];
+                    _removed.unselect();
+                }
+                idx++;
+            }
             return this;
         };
         TBaseTreeView.prototype.expandAll = function () {
@@ -727,8 +778,12 @@ var mf;
             return null;
         };
         TBaseTreeView.prototype._findNodeByIndex = function (idx) {
-            var _nodes = this.element.querySelectorAll('li');
-            return _nodes[idx];
+            try {
+                var _nodes = this.element.querySelectorAll('li');
+                return _nodes[idx];
+            }
+            catch (err) {
+            }
         };
         TBaseTreeView.prototype._keyupHandler = function (ev) {
             var _that = this;
@@ -785,7 +840,7 @@ var mf;
                     case mf.TREE_ROLE.TREE_NODE_COUNTRY_CAPTION:
                     case mf.TREE_ROLE.TREE_NODE_GEONAME_CAPTION:
                         node = ev.target.parentElement._getObj();
-                        this._select(node);
+                        this._select(node, ev.ctrlKey);
                         break;
                 }
             }
@@ -817,6 +872,38 @@ var mf;
                 catch (err) {
                 }
             }
+        };
+        TBaseTreeView.prototype.recursiveParents = function (node) {
+            var _node = node;
+            var _ret = [];
+            while (_node) {
+                try {
+                    if (_node.parentNodes) {
+                        if (!_node.parentNodes.isTopLevel) {
+                            _ret.push(_node);
+                            _node = _node.parentNodes.ownNode;
+                        }
+                        else {
+                            _ret.push(_node);
+                            _node = null;
+                        }
+                    }
+                    else {
+                        _node = null;
+                    }
+                }
+                catch (err) {
+                }
+            }
+            return _ret.reverse();
+        };
+        TBaseTreeView.prototype.statusPath = function (node) {
+            var _path = this.recursiveParents(node);
+            var _arr = [];
+            [].map.call(_path, function (_node) {
+                _arr.push(_node.caption);
+            });
+            this.status.text = _arr.join('/');
         };
         return TBaseTreeView;
     }(mf.TBaseDataElement));

@@ -52,58 +52,67 @@ module mf {
             });
         }
 
-        public findTitleInNodes(title: string) {
+        public findTitleInNodes(ttl: string | Array<string>) {
             let _that = this;
             this._searchedNodes = [];
-            title = title.toLowerCase();
 
-            if (title.trim() == '') {
+            if (typeof ttl == 'string') {
+                ttl = [ttl];
+            }
+
+            for (let t = 0; t < ttl.length; t++) {
+
+                let title = ttl[t].toLowerCase();
+
+                if (title.trim() == '') {
+                    this._clearFindRes(true);
+                    return false;
+                }
+
                 this._clearFindRes(true);
-                return false;
-            }
+                let _method = 0;
+                if (title.substring(0, 1) == "*") {
+                    title = title.substr(1);
+                    _method = _method | 1;
+                }
+                if (title.substr(-1) == "*") {
+                    title = title.substr(0, title.length - 1);
+                    _method = _method | 2;
+                }
 
-            this._clearFindRes(true);
-            let _method = 0;
-            if (title.substring(0, 1) == "*") {
-                title = title.substr(1);
-                _method = _method | 1;
-            }
-            if (title.substr(-1) == "*") {
-                title = title.substr(0, title.length - 1);
-                _method = _method | 2;
-            }
-
-            for (let i = 0; i < this.owner.all.length; i++) {
-                switch (_method) {
-                    //                    case 0:                         /* точное совпадение */
-                    //                        if (overlapWord(title, this.TreeView.all[i].data.caption)) {
-                    //                            this._setFind(this.TreeView.all[i]);
-                    //                        }
-                    //                        break;
-                    case 0:                         /* точное совпадение */
-                    case 2:                         /* совпадение слева */
-                        if (this.overlapWordFromLeft(title, this.owner.all[i].str)) {
-                            this._setFind(this.owner.all[i]);
-                        } else {
-                            this._setUnfinded(this.owner.all[i]);
-                        }
-                        break;
-                    case 1:                         /* совпадение справа */
-                        if (this.overlapWordFromRight(title, this.owner.all[i].str)) {
-                            this._setFind(this.owner.all[i]);
-                        } else {
-                            this._setUnfinded(this.owner.all[i]);
-                        }
-                        break;
-                    case 3:                         /* совпадение в поиске строки */
-                        if (this.overlapSearch(title, this.owner.all[i].str)) {
-                            this._setFind(this.owner.all[i]);
-                        } else {
-                            this._setUnfinded(this.owner.all[i]);
-                        }
-                        break;
+                for (let i = 0; i < this.owner.all.length; i++) {
+                    switch (_method) {
+                        //                    case 0:                         /* точное совпадение */
+                        //                        if (overlapWord(title, this.TreeView.all[i].data.caption)) {
+                        //                            this._setFind(this.TreeView.all[i]);
+                        //                        }
+                        //                        break;
+                        case 0:                         /* точное совпадение */
+                        case 2:                         /* совпадение слева */
+                            if (this.overlapWordFromLeft(title, this.owner.all[i].str)) {
+                                this._setFind(this.owner.all[i]);
+                            } else {
+                                this._setUnfinded(this.owner.all[i]);
+                            }
+                            break;
+                        case 1:                         /* совпадение справа */
+                            if (this.overlapWordFromRight(title, this.owner.all[i].str)) {
+                                this._setFind(this.owner.all[i]);
+                            } else {
+                                this._setUnfinded(this.owner.all[i]);
+                            }
+                            break;
+                        case 3:                         /* совпадение в поиске строки */
+                            if (this.overlapSearch(title, this.owner.all[i].str)) {
+                                this._setFind(this.owner.all[i]);
+                            } else {
+                                this._setUnfinded(this.owner.all[i]);
+                            }
+                            break;
+                    }
                 }
             }
+            
             [].map.call(this._searchedNodes, function (_item: mf.ISearchIndexItem) {
                 _item.node.element.scrollIntoView();
                 _that.owner.recursiveExpand.call(_that, _item.node);

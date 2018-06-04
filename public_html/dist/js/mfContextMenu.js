@@ -95,41 +95,64 @@ var mf;
 })(mf || (mf = {}));
 var mf;
 (function (mf) {
+    var CONTEXTMENU_ITEM_TYPE;
+    (function (CONTEXTMENU_ITEM_TYPE) {
+        CONTEXTMENU_ITEM_TYPE[CONTEXTMENU_ITEM_TYPE["BUTTON"] = 1] = "BUTTON";
+        CONTEXTMENU_ITEM_TYPE[CONTEXTMENU_ITEM_TYPE["SEPARATOR"] = 2] = "SEPARATOR";
+    })(CONTEXTMENU_ITEM_TYPE = mf.CONTEXTMENU_ITEM_TYPE || (mf.CONTEXTMENU_ITEM_TYPE = {}));
     mf.DEF_CONTEXTMENUITEM_CSSCLASS = 'mf-context_menu_item';
+    mf.DEF_CONTEXTMENUSEPARATOR_CSSCLASS = 'mf-context_menu_separator';
     var TContextMenuItem = (function (_super) {
         __extends(TContextMenuItem, _super);
         function TContextMenuItem(options) {
             var _this = _super.call(this, options) || this;
+            _this.nodeType = 1;
             Objects.extend(_this, options);
             var _that = _this;
-            _this._captionElement.parentElement.eventListener('click', function (ev) {
-                var _menuItemElement, _menuItemObj, _menuElement, _menuObj;
-                _menuItemElement = ev.target.closest(['[', mf.ATTRIBUTE_ANCESTOR, ']'].join(''));
-                if (_menuItemElement) {
-                    _menuItemObj = _menuItemElement._getObj();
-                    if (_menuItemObj) {
-                        _menuElement = _menuItemElement.closest('[data-role=' + mf.DEF_CONTEXTMENU_ROLE + ']');
-                        if (_menuElement) {
-                            _menuObj = _menuElement._getObj();
-                            if (_menuObj && _menuObj.expander) {
-                                try {
-                                    _menuObj.expander[_menuItemObj.call].call(_menuObj.expander);
-                                }
-                                catch (err) {
-                                    console.error(err, _menuObj.expander);
+            if (_this.nodeType == mf.CONTEXTMENU_ITEM_TYPE.BUTTON) {
+                _this._captionElement.parentElement.eventListener('click', function (ev) {
+                    var _menuItemElement, _menuItemObj, _menuElement, _menuObj;
+                    _menuItemElement = ev.target.closest(['[', mf.ATTRIBUTE_ANCESTOR, ']'].join(''));
+                    if (_menuItemElement) {
+                        _menuItemObj = _menuItemElement._getObj();
+                        if (_menuItemObj) {
+                            _menuElement = _menuItemElement.closest('[data-role=' + mf.DEF_CONTEXTMENU_ROLE + ']');
+                            if (_menuElement) {
+                                _menuObj = _menuElement._getObj();
+                                if (_menuObj && _menuObj.expander) {
+                                    try {
+                                        _menuObj.expander[_menuItemObj.call].call(_menuObj.expander);
+                                    }
+                                    catch (err) {
+                                        console.error(err, _menuObj.expander);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                _that.parent.parentElement._getObj().collapse();
-            });
+                    _that.parent.parentElement._getObj().collapse();
+                });
+            }
             return _this;
         }
         TContextMenuItem.prototype._innerInit = function (options) {
             var _that = this;
-            this.element = Html.createElementEx('li', options['parent'], { 'class': options['cssClass'] || '' });
-            this._captionElement = Html.createElementEx('b', this.element);
+            if (!options['nodeType']) {
+                this.nodeType = mf.CONTEXTMENU_ITEM_TYPE.BUTTON;
+            }
+            else {
+                this.nodeType = options['nodeType'];
+            }
+            this.element = Html.createElementEx('li', options['parent'], { 'class': options['cssClass'] || "" });
+            if (this.nodeType == mf.CONTEXTMENU_ITEM_TYPE.SEPARATOR) {
+                this._element.classList.add(mf.DEF_CONTEXTMENUSEPARATOR_CSSCLASS);
+            }
+            else {
+                this._element.classList.add(mf.DEF_CONTEXTMENUITEM_CSSCLASS);
+            }
+            if (this.nodeType == mf.CONTEXTMENU_ITEM_TYPE.BUTTON) {
+                this._captionElement = Html.createElementEx('b', this.element);
+            }
         };
         Object.defineProperty(TContextMenuItem.prototype, "caption", {
             get: function () {

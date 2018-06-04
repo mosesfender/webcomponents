@@ -7,7 +7,7 @@
     font-size: .7em;
 
     position: absolute;
-    box-shadow: .2em .2em .6em @color-main;
+    box-shadow: 0.5em 0.5em 1.5em @color-main;
     display: none;
     opacity: 0;
     /*transition: all .2s ease-in-out 0s;*/
@@ -32,6 +32,16 @@
             cursor: pointer;
             &:hover {
                 background-color: @color-back-hover;
+            }
+            &.mf-context_menu_separator {
+                height: 1px;
+                box-shadow: 1px 1px 1px #444;
+                padding: 0 !important;
+                margin: 0;
+            }           
+            &.danger{
+                background-color: #a00;
+                color: #ffa;
             }
         }
     }

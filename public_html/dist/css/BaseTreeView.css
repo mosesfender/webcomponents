@@ -120,8 +120,19 @@
 }
 [data-role="treeview-searcher"] {
   border: 1px solid black;
+  border-bottom: 0;
   width: 100%;
   background-color: #ffe;
   padding: 2px 4px;
   color: brown;
+}
+[data-role="treeview-statusbar"] {
+  border: 1px solid black;
+  border-top: 0;
+  width: 100%;
+  background-color: #ffe;
+  padding: 2px 4px;
+  color: #333;
+  min-height: 2em;
+  font-size: .8em;
 }

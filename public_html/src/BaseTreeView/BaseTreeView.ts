@@ -34,12 +34,13 @@ module mf {
         protected _data: Array<mf.IBaseNodeData>;
         public all: mf.TSearchIndex = [];
         protected _selected: Array<mf.TBaseTreeNode> = [];
-        public multiselect: boolean = false;
+        public multiselect: boolean;
 
         protected _contextMenuList: mf.TContextMenuList;
         protected _contextMenuMap: mf.TContextMenuMap;
 
         public searcher: mf.TTreeViewSearcher;
+        public status: mf.TStatusBar;
 
         constructor(options) {
             super(options);
@@ -61,12 +62,18 @@ module mf {
             this.searcher = new mf.TTreeViewSearcher(_searcherOptions);
             this._wrap.appendChild(this.parent.removeChild(this._element));
 
-
             this._createNodes();
 
+            let _statusOptions = {};
+            _statusOptions['parent'] = this._wrap;
+            _statusOptions['owner'] = this;
+            if (options['status']) {
+                Objects.extend(_statusOptions, options['status']);
+            }
+            this.status = new mf.TStatusBar(_statusOptions);
 
             document.addEventListener('keyup', function (ev: Event) {
-                _that._keyupHandler.call(_that, ev);
+                //                _that._keyupHandler.call(_that, ev);
             });
 
             this.on('contextmenu', function (ev: Event) {
@@ -93,6 +100,10 @@ module mf {
 
             this.on('onAfterLoadChilds', function (ev: CustomEvent) {
                 _that._onAfterCreateNodeHandler.call(_that);
+            });
+
+            this.on('onSelectNode', function (ev: CustomEvent) {
+                _that.statusPath(ev.detail);
             });
 
             this.fire('created');
@@ -127,11 +138,13 @@ module mf {
             this._select(node);
         }
 
-        protected _select(node: mf.TBaseTreeNode) {
+        protected _select(node: mf.TBaseTreeNode, ctrl?: boolean) {
             if (node) {
-                this._deselect();
+                if (!(this.multiselect && ctrl)) {
+                    this._deselect();
+                }
                 if (node.data.selected) {
-                    node.unselect();
+                    this._deselect(node, ctrl);
                 } else {
                     node.select();
                     this._selected.push(node);
@@ -140,11 +153,22 @@ module mf {
             return this;
         }
 
-        protected _deselect(inode?: mf.TBaseTreeNode) {
-            [].map.call(this._selected, function (node: mf.TBaseTreeNode, idx: number, sel: Array<mf.TBaseTreeNode>) {
-                let _removed = sel.splice(idx, 1)[0] as mf.TBaseTreeNode;
-                _removed.unselect();
-            });
+        protected _deselect(inode?: mf.TBaseTreeNode, ctrl?: boolean) {
+            let _removed;
+            let _that = this;
+            let idx = 0;
+            while (_that._selected.length) {
+                if (_that.multiselect && ctrl) {
+                    if (inode && inode == _that._selected[idx]) {
+                        _removed = _that._selected.splice(idx, 1)[0] as mf.TBaseTreeNode;
+                        return _removed.unselect();
+                    }
+                } else {
+                    _removed = _that._selected.splice(0, 1)[0] as mf.TBaseTreeNode;
+                    _removed.unselect();
+                }
+                idx++;
+            }
             return this;
         }
 
@@ -276,8 +300,12 @@ module mf {
         }
 
         private _findNodeByIndex(idx: number) {
-            let _nodes = (this.element as HTMLElement).querySelectorAll('li');
-            return _nodes[idx];
+            try {
+                let _nodes = (this.element as HTMLElement).querySelectorAll('li');
+                return _nodes[idx];
+            } catch (err) {
+                //console.error(err);
+            }
         }
 
         protected _keyupHandler(ev: KeyboardEvent) {
@@ -343,7 +371,7 @@ module mf {
             }
         }
 
-        protected _clickHandler(ev: Event) {
+        protected _clickHandler(ev: MouseEvent) {
             let node;
             if ((ev.target as HTMLElement).hasAttribute('data-role')) {
                 switch ((ev.target as HTMLElement).getAttribute('data-role')) {
@@ -356,7 +384,7 @@ module mf {
                     case mf.TREE_ROLE.TREE_NODE_COUNTRY_CAPTION:
                     case mf.TREE_ROLE.TREE_NODE_GEONAME_CAPTION:
                         node = (ev.target as HTMLElement).parentElement._getObj() as mf.TBaseTreeNode;
-                        this._select(node);
+                        this._select(node, ev.ctrlKey);
                         break;
                 }
             }
@@ -388,6 +416,38 @@ module mf {
                     //console.error(err);
                 }
             }
+        }
+
+        public recursiveParents(node: mf.TBaseTreeNode) {
+            let _node = node;
+            let _ret = [];
+            while (_node) {
+                try {
+                    if (_node.parentNodes) {
+                        if (!_node.parentNodes.isTopLevel) {
+                            _ret.push(_node);
+                            _node = _node.parentNodes.ownNode;
+                        } else {
+                            _ret.push(_node);
+                            _node = null;
+                        }
+                    } else {
+                        _node = null;
+                    }
+                } catch (err) {
+                    //console.error(err);
+                }
+            }
+            return _ret.reverse();
+        }
+
+        public statusPath(node: mf.TBaseTreeNode) {
+            let _path = this.recursiveParents(node);
+            let _arr: Array<string> = [];
+            [].map.call(_path, function (_node: mf.TBaseTreeNode) {
+                _arr.push(_node.caption);
+            });
+            this.status.text = _arr.join('/');
         }
     }
 }
