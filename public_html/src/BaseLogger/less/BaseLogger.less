@@ -1,3 +1,9 @@
+@color-danger: #cc0000;
+@color-warning: #cc9900;
+@color-info: #0000cc;
+@color-success: #009933;
+@color-default: #666666;
+
 .mf-logger {
     position: relative;
     width: 100%;
@@ -13,5 +19,21 @@
         position: relative;
         width: 100%;
         padding: 1em;
+        p {
+            &.danger {
+                color: @color-danger;
+            }
+            &.warning {
+                color: @color-warning;
+            }
+            &.info {
+                color: @color-info;
+            }
+            &.success {
+                color: @color-success;
+            }
+            color: @color-default;
+            margin: 0;
+        }
     }
 }
