@@ -30,7 +30,6 @@ var mf;
                 this.owner.all.push(item);
             }
             catch (err) {
-                console.error(err);
             }
             finally {
             }

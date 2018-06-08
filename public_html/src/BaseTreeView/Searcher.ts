@@ -30,7 +30,7 @@ module mf {
             try {
                 this.owner.all.push(item);
             } catch (err) {
-                console.error(err);
+                //console.error(err);
             } finally {
                 //console.log(item.str);
             }
