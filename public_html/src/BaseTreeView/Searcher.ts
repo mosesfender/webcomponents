@@ -36,17 +36,17 @@ module mf {
             }
         }
 
-        protected _setFind(_item: mf.ISearchIndexItem) {
+        public _setFind(_item: mf.ISearchIndexItem) {
             _item.node.element.classList.remove('hidden');
             _item.node.element.classList.add('findres');
             this._searchedNodes.push(_item);
         }
 
-        protected _setUnfinded(_item: mf.ISearchIndexItem) {
+        public _setUnfinded(_item: mf.ISearchIndexItem) {
             _item.node.element.classList.add('hidden');
         }
 
-        protected _clearFindRes(all?: boolean) {
+        public _clearFindRes(all?: boolean) {
             [].map.call(all ? this.owner.all : this._searchedNodes, function (_item: mf.ISearchIndexItem) {
                 _item.node.element.classList.removeMany('findres hidden');
             });

@@ -567,7 +567,6 @@ var mf;
                 _that._contextMenuHandler.call(_that, ev);
             });
             _this.on('click', function (ev) {
-                _that._clickHandler.call(_that, ev);
             });
             _this.on('dblclick', function (ev) {
                 _that._dblclickHandler.call(_that, ev);

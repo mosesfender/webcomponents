@@ -78,11 +78,11 @@ module mf {
 
             this.on('contextmenu', function (ev: Event) {
                 ev.preventDefault();
-                _that._contextMenuHandler.call(_that, ev);
+               _that._contextMenuHandler.call(_that, ev);
             });
 
             this.on('click', function (ev: Event) {
-                _that._clickHandler.call(_that, ev);
+                //_that._clickHandler.call(_that, ev);
             });
 
             this.on('dblclick', function (ev: Event) {
@@ -371,7 +371,7 @@ module mf {
             }
         }
 
-        protected _clickHandler(ev: MouseEvent) {
+        public _clickHandler(ev: MouseEvent) {
             let node;
             if ((ev.target as HTMLElement).hasAttribute('data-role')) {
                 switch ((ev.target as HTMLElement).getAttribute('data-role')) {

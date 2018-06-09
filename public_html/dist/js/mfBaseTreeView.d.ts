@@ -12,9 +12,9 @@ declare module mf {
         constructor(options?: any);
         protected _innerInit(options: any): void;
         addIndex(item: mf.ISearchIndexItem): void;
-        protected _setFind(_item: mf.ISearchIndexItem): void;
-        protected _setUnfinded(_item: mf.ISearchIndexItem): void;
-        protected _clearFindRes(all?: boolean): void;
+        _setFind(_item: mf.ISearchIndexItem): void;
+        _setUnfinded(_item: mf.ISearchIndexItem): void;
+        _clearFindRes(all?: boolean): void;
         findTitleInNodes(ttl: string | Array<string>): boolean;
         protected overlapWord(word: string, origin: string | Array<string>): boolean;
         protected overlapWordFromLeft(word: string, origin: string | Array<string>): boolean;
@@ -160,7 +160,7 @@ declare module mf {
         private _findNodeByIndex(idx);
         protected _keyupHandler(ev: KeyboardEvent): void;
         protected _contextMenuHandler(ev: Event): void;
-        protected _clickHandler(ev: MouseEvent): void;
+        _clickHandler(ev: MouseEvent): void;
         protected _dblclickHandler(ev: Event): void;
         recursiveExpand(node: mf.TBaseTreeNode): void;
         recursiveParents(node: mf.TBaseTreeNode): any[];
