@@ -38,14 +38,18 @@ module mf {
         protected _label: HTMLElement;
         protected _colapseLever: HTMLElement;
         protected _data: mf.IBaseNodeData;
-        
+
         public expandAfterCreate: boolean;
 
         constructor(options) {
             super(options);
-            
-            if (this.expandAfterCreate == undefined){
+
+            if (this.expandAfterCreate == undefined) {
                 this.expandAfterCreate = false;
+            }
+
+            if (!this._treeView) {
+                this.TreeView = (this._element.parentElement._getObj() as mf.TBaseTreeNodes).TreeView;
             }
 
             this.element.setAttribute('data-role', TREE_ROLE.TREE_NODE);
@@ -69,11 +73,11 @@ module mf {
             this._hasChild();
             this._treeView.fire('onAfterCreateNode', this);
         }
-        
-        destroy(){
+
+        destroy() {
             return super.destroy();
         }
-        
+
         protected onAfterDraw(obj: mf.TBaseTreeNode) {}
 
         protected _innerInit() {
@@ -196,20 +200,20 @@ module mf {
             }
             return this.nodes;
         }
-        
-        public loadChildren(){
+
+        public loadChildren() {
             this._treeView.fire('onAfterLoadChilds');
         }
 
-        public expandChilds(){
+        public expandChilds() {
             this.expandAfterCreate = true;
             this.expand();
         }
 
         public get parentNodes() {
-            if (this.parent){
+            if (this.parent) {
                 return this.parent[mf.ANCESTOR_OBJ] as mf.TBaseTreeNodes;
-            }else{
+            } else {
                 return null;
             }
         }

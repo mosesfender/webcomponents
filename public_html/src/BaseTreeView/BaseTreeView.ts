@@ -78,7 +78,7 @@ module mf {
 
             this.on('contextmenu', function (ev: Event) {
                 ev.preventDefault();
-               _that._contextMenuHandler.call(_that, ev);
+                _that._contextMenuHandler.call(_that, ev);
             });
 
             this.on('click', function (ev: Event) {
@@ -448,6 +448,21 @@ module mf {
                 _arr.push(_node.caption);
             });
             this.status.text = _arr.join('/');
+        }
+
+        public rewriteAll() {
+            let _that = this;
+            this.clearAll();
+            [].map.call(this.element.querySelectorAll('li'), function (_li: HTMLElement) {
+                let _node = _li._getObj() as mf.TBaseTreeNode;
+                _that.all.push(<mf.ISearchIndexItem> {node: _node, str: [_node.caption]});
+            });
+            return this;
+        }
+
+        public clearAll() {
+            this.all = [];
+            return this;
         }
     }
 }

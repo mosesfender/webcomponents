@@ -205,6 +205,9 @@ var mf;
             if (_this.expandAfterCreate == undefined) {
                 _this.expandAfterCreate = false;
             }
+            if (!_this._treeView) {
+                _this.TreeView = _this._element.parentElement._getObj().TreeView;
+            }
             _this.element.setAttribute('data-role', mf.TREE_ROLE.TREE_NODE);
             _this.caption = _this.data.caption;
             _this.fire('onAfterDraw', _this);
@@ -434,7 +437,7 @@ var mf;
                 return args[0];
             }
             if (typeof (args[0]) === 'string') {
-                var node = new mf.TBaseTreeNode(args[1]);
+                var node = new mf.TBaseTreeNode({ data: args[1] });
                 node.TreeView = this._treeView;
                 this.element.appendChild(node.element);
                 this.TreeView.searcher.addIndex({ node: node, str: node.caption });
@@ -446,10 +449,16 @@ var mf;
             node = null;
         };
         TBaseTreeNodes.prototype._removeNodes = function () {
-            while (this.element.firstChild) {
-                this.removeNode(this.element.firstChild._getObj());
+            if (this.clearBeforeFill) {
+                while (this.element.firstChild) {
+                    this.removeNode(this.element.firstChild._getObj());
+                }
             }
         };
+        TBaseTreeNodes.prototype.getNode = function (idx) {
+            return this.siblings[idx]._getObj();
+        };
+        ;
         Object.defineProperty(TBaseTreeNodes.prototype, "nodes", {
             set: function (val) {
                 if (val.length) {
@@ -505,6 +514,19 @@ var mf;
         Object.defineProperty(TBaseTreeNodes.prototype, "tag", {
             get: function () {
                 return 'ul';
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(TBaseTreeNodes.prototype, "clearBeforeFill", {
+            get: function () {
+                if (this._clearBeforeFill === undefined) {
+                    this._clearBeforeFill = true;
+                }
+                return this._clearBeforeFill;
+            },
+            set: function (val) {
+                this._clearBeforeFill = val;
             },
             enumerable: true,
             configurable: true
@@ -902,6 +924,19 @@ var mf;
                 _arr.push(_node.caption);
             });
             this.status.text = _arr.join('/');
+        };
+        TBaseTreeView.prototype.rewriteAll = function () {
+            var _that = this;
+            this.clearAll();
+            [].map.call(this.element.querySelectorAll('li'), function (_li) {
+                var _node = _li._getObj();
+                _that.all.push({ node: _node, str: [_node.caption] });
+            });
+            return this;
+        };
+        TBaseTreeView.prototype.clearAll = function () {
+            this.all = [];
+            return this;
         };
         return TBaseTreeView;
     }(mf.TBaseDataElement));

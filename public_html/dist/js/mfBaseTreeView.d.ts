@@ -89,18 +89,21 @@ declare module mf {
 declare module mf {
     class TBaseTreeNodes extends mf.TBaseElement {
         protected _treeView: mf.TBaseTreeView;
+        protected _clearBeforeFill: boolean;
         constructor(options: any);
         addNode(node: mf.TBaseTreeNode): any;
         addNode(node: mf.ISearchIndexItem): any;
         addNode(label: string, data: mf.IBaseNodeData): any;
         removeNode(node: mf.TBaseTreeNode, _selidx?: number): void;
         protected _removeNodes(): void;
+        getNode(idx: number): TBaseElement;
         nodes: Array<mf.IBaseNodeData>;
         readonly siblings: HTMLCollection;
         readonly ownNode: TBaseTreeNode;
         readonly count: number;
         TreeView: mf.TBaseTreeView;
         readonly tag: string;
+        clearBeforeFill: boolean;
         readonly isTopLevel: boolean;
     }
 }
@@ -165,5 +168,7 @@ declare module mf {
         recursiveExpand(node: mf.TBaseTreeNode): void;
         recursiveParents(node: mf.TBaseTreeNode): any[];
         statusPath(node: mf.TBaseTreeNode): void;
+        rewriteAll(): this;
+        clearAll(): this;
     }
 }
