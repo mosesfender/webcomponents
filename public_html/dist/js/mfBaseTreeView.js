@@ -155,6 +155,16 @@ var mf;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(TTreeViewSearcher.prototype, "searchedNodes", {
+            get: function () {
+                return this._searchedNodes;
+            },
+            set: function (val) {
+                this._searchedNodes = val;
+            },
+            enumerable: true,
+            configurable: true
+        });
         return TTreeViewSearcher;
     }(mf.TBaseElement));
     mf.TTreeViewSearcher = TTreeViewSearcher;

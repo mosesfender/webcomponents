@@ -8,7 +8,7 @@
 @base-size: .9em;
 @color-back-selected: #6cbddd;
 @color-back-overmoused: #fe9;
-@color-back-finded: #33ff99;
+@color-back-finded: rgba(51, 255, 153, .4);
 
 .icon-spinner9 {
     animation-name: spin;
@@ -101,6 +101,11 @@
                     background-color: @color-back-finded;
                 }
             }
+            &.findres.selected {
+                & > b {
+                    background-color: @color-back-finded + @color-back-selected;
+                }
+            }
             &.overmouse {
                 & > b {
                     background-color: @color-back-overmoused;
@@ -139,6 +144,7 @@
     }
     & > ul {
         display: block;
+        transition: all 1s ease-in-out 0s;
     }
 }
 

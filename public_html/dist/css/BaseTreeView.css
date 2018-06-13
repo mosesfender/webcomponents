@@ -86,7 +86,10 @@
   background-color: #6cbddd;
 }
 .mf-tree ul li.findres > b {
-  background-color: #33ff99;
+  background-color: rgba(51, 255, 153, 0.4);
+}
+.mf-tree ul li.findres.selected > b {
+  background-color: #9fffff;
 }
 .mf-tree ul li.overmouse > b {
   background-color: #fe9;
@@ -117,6 +120,7 @@
 }
 .mf-tree > ul {
   display: block;
+  transition: all 1s ease-in-out 0s;
 }
 [data-role="treeview-searcher"] {
   border: 1px solid black;

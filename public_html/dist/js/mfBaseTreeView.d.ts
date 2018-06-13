@@ -21,6 +21,7 @@ declare module mf {
         protected overlapWordFromRight(word: string, origin: string | Array<string>): boolean;
         protected overlapSearch(word: string, origin: string | Array<string>): boolean;
         readonly TreeView: TBaseTreeView;
+        searchedNodes: ISearchIndexItem[];
     }
 }
 declare module mf {
@@ -90,6 +91,7 @@ declare module mf {
     class TBaseTreeNodes extends mf.TBaseElement {
         protected _treeView: mf.TBaseTreeView;
         protected _clearBeforeFill: boolean;
+        addedBuffer: Array<mf.TBaseTreeNode>;
         constructor(options: any);
         addNode(node: mf.TBaseTreeNode): any;
         addNode(node: mf.ISearchIndexItem): any;

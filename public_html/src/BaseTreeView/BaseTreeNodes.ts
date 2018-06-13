@@ -2,6 +2,7 @@ module mf {
     export class TBaseTreeNodes extends mf.TBaseElement {
         protected _treeView: mf.TBaseTreeView;
         protected _clearBeforeFill: boolean;
+        public addedBuffer: Array<mf.TBaseTreeNode>;
 
         constructor(options) {
             super(options);

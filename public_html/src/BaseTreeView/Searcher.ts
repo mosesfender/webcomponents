@@ -112,7 +112,7 @@ module mf {
                     }
                 }
             }
-            
+
             [].map.call(this._searchedNodes, function (_item: mf.ISearchIndexItem) {
                 _item.node.element.scrollIntoView();
                 _that.owner.recursiveExpand.call(_that, _item.node);
@@ -167,6 +167,14 @@ module mf {
 
         public get TreeView() {
             return (this._element.nextSibling as HTMLElement)._getObj() as mf.TBaseTreeView;
+        }
+
+        public get searchedNodes() {
+            return this._searchedNodes;
+        }
+
+        public set searchedNodes(val) {
+            this._searchedNodes = val;
         }
 
     }
